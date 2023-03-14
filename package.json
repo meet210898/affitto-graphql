@@ -1,0 +1,29 @@
+{
+  "name": "affitto-graphql",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meet210898/affitto-graphql.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meet210898/affitto-graphql/issues"
+  },
+  "homepage": "https://github.com/meet210898/affitto-graphql#readme",
+  "dependencies": {
+    "apollo-server": "^3.12.0",
+    "apollo-server-core": "^3.12.0",
+    "bcryptjs": "^2.4.3",
+    "graphql": "^16.6.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.1"
+  }
+}
