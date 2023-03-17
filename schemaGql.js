@@ -142,14 +142,14 @@ const typeDefs = gql`
     type Mutation {
         signUpUser(userNew:UserInput):User
         signInUser(userSignin:UserSigninInput):Token
-        createState(stateName:String, stateImage:String):String
-        createCity(stateId:String, cityName:String, cityImage:String):String
+        createState(stateNew:StateInput):String
+        createCity(cityNew:CityInput):String
         createVehicleType(vehicleTypeNew:VehicleTypeInput):String
         createCompany(companyNew:CompanyInput):String
         createVehicle(vehicleNew:VehicleInput):String
         createBooking(bookingNew:BookingInput):String
-        createFaqCategory(faqCategory:String):String
-        createFaq(faq:FaqInput):String
+        createFaqCategory(faqCategoryNew:FaqCategoryInput):String
+        createFaq(faqNew:FaqInput):String
     }
 
     input UserInput {
@@ -209,6 +209,21 @@ const typeDefs = gql`
         endDate:String
         payment:Float
         status:Boolean
+    }
+
+    input StateInput {
+        stateName:String
+        stateImage:String
+    }
+
+    input CityInput {
+        stateId:String
+        cityName:String
+        cityImage:String
+    }
+
+    input FaqCategoryInput { 
+        faqCategory:String
     }
 
     input FaqInput {

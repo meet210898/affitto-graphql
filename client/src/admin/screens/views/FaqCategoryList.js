@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
-import { GET_ALL_STATES } from '../../gqloperations/queries'
+import { GET_ALL_FAQCATORIES } from '../../../gqloperations/queries'
 
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -31,8 +31,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const StateList = () => {
-    const { error, data, loading } = useQuery(GET_ALL_STATES)
+const FaqCategoryList = () => {
+    const { error, data, loading } = useQuery(GET_ALL_FAQCATORIES)
     if (loading) return <h1>Loading...</h1>
     if (error) {
         console.log('error', error)
@@ -44,18 +44,16 @@ const StateList = () => {
                 <TableHead>
                     <TableRow>
                         <StyledTableCell>No</StyledTableCell>
-                        <StyledTableCell align="left">State Name</StyledTableCell>
-                        <StyledTableCell align="left">State Image</StyledTableCell>
+                        <StyledTableCell align="left">FAQ Category Name</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data?.state?.map((row, index) => (
+                    {data?.faqCategory?.slice(0).reverse().map((row, index) => (
                         <StyledTableRow key={index}>
                             <StyledTableCell component="th" scope="row">
                                 {(index + 1)}
                             </StyledTableCell>
-                            <StyledTableCell align="left">{row.stateName}</StyledTableCell>
-                            <StyledTableCell align="left">{row.stateImage}</StyledTableCell>
+                            <StyledTableCell align="left">{row.faqCategory}</StyledTableCell>
                         </StyledTableRow>
                     ))}
                 </TableBody>
@@ -64,4 +62,4 @@ const StateList = () => {
     )
 }
 
-export default StateList
+export default FaqCategoryList
