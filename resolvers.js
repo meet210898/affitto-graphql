@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from './config.js';
+import path from 'path';
+import * as fs from 'fs';
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 
 const User = mongoose.model('RegisterUser');
 const State = mongoose.model('State');
@@ -14,6 +17,7 @@ const FaqCategory = mongoose.model('FaqCategory');
 const Faq = mongoose.model('Faq');
 
 const resolvers = {
+    Upload: GraphQLUpload,
     Query: {
         user: async () => await User.find({})
             .populate("stateId", "_id stateName")
@@ -121,6 +125,22 @@ const resolvers = {
             await newFaq.save()
             return "FAQ added!!"
         },
+        uploadFile: async (_, { file }) => {
+            const {
+                createReadStream,
+                filename,
+                mimetype,
+                encoding,
+            } = await file;
+            console.log('__dirname', __dirname)
+            const stream = createReadStream();
+            const pathName = path.join(__dirname, `/public/images/${filename}`);
+            await stream.pipe(fs.createWriteStream(pathName));
+
+            return {
+                url: `http://localhost:4000/images/${filename}`,
+            }
+        }
     }
 }
 

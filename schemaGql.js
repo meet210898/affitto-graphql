@@ -1,6 +1,11 @@
 import { gql } from 'apollo-server';
 
 const typeDefs = gql`
+    scalar Upload
+
+    type File {
+        url:String
+    }
 
     type Query{
         user:[User]
@@ -150,6 +155,7 @@ const typeDefs = gql`
         createBooking(bookingNew:BookingInput):String
         createFaqCategory(faqCategoryNew:FaqCategoryInput):String
         createFaq(faqNew:FaqInput):String
+        uploadFile(file: Upload!): File!
     }
 
     input UserInput {

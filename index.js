@@ -1,9 +1,11 @@
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import typeDefs from './schemaGql.js';
 import { JWT_SECRET, MONGO_URI } from './config.js';
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose';
+import express from 'express';
 
 mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
@@ -47,6 +49,14 @@ const server = new ApolloServer({
     ]
 })
 
-server.listen().then(({ url }) => {
-    console.log(`server ready at ${url}`);
-});
+await server.start();
+
+const app = express();
+
+app.use(graphqlUploadExpress());
+server.applyMiddleware({ app });
+await new Promise((r) => app.listen({ port: 4000 }, r));
+console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+// server.listen().then(({ url }) => {
+//     console.log(`server ready at ${url}`);
+// });

@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useMutation } from '@apollo/client';
+import { UPLOAD_FILE } from '../../../gqloperations/mutation';
 import Typography from "@mui/material/Typography";
 import { Button, TextField, IconButton } from "@mui/material";
 import { Box, Card, CardActions, CardContent } from '@mui/material'
@@ -10,10 +12,15 @@ const AddState = () => {
         // display: "none",
     });
 
-    const [stateData, setStateData] = React.useState({
+    const [stateData, setStateData] = useState({
         stateName: null,
         stateImage: "",
     });
+
+    const [uploadFile] = useMutation(UPLOAD_FILE, {
+        onCompleted: data => console.log('data==', data),
+        onError: err => console.log('error in upload file', err)
+    })
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,11 +33,16 @@ const AddState = () => {
     const handleImageChange = (e) => {
         const { name, files } = e.target;
         console.log(name, "e.target");
-        console.log('files',files)
+        console.log('files',files[0])
         setStateData({
             ...stateData,
             [name]: files[0],
         });
+        const file = files[0];
+        console.log('file=========',file)
+        uploadFile({
+            variables:{ file }
+        })
     };
 
     return (
