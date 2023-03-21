@@ -17,7 +17,7 @@ const LoginScreen = () => {
   const [userSignin, { loading, error }] = useMutation(SIGNIN_USER, {
     onCompleted(data) {
       localStorage.setItem('adminToken', data.user.token)
-      navigate('/Admin/States')
+      navigate('/Admin/viewState')
     }
   })
 

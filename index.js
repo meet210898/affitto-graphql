@@ -1,11 +1,12 @@
 import { ApolloServer } from 'apollo-server-express';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
+import { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import typeDefs from './schemaGql.js';
 import { JWT_SECRET, MONGO_URI } from './config.js';
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose';
 import express from 'express';
+import cors from 'cors';
 
 mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
@@ -40,23 +41,31 @@ const context = ({ req }) => {
     }
 }
 
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context,
-    plugins: [
-        ApolloServerPluginLandingPageGraphQLPlayground()
-    ]
-})
+const startServer = async () => {
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        context,
+        csrfPrevention: true,
+        cache: 'bounded',
+        plugins: [
+            // ApolloServerPluginLandingPageGraphQLPlayground(),
+            ApolloServerPluginLandingPageLocalDefault({ embed: true })
+        ]
+    })
 
-await server.start();
+    await server.start();
 
-const app = express();
+    const app = express();
 
-app.use(graphqlUploadExpress());
-server.applyMiddleware({ app });
-await new Promise((r) => app.listen({ port: 4000 }, r));
-console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
-// server.listen().then(({ url }) => {
-//     console.log(`server ready at ${url}`);
-// });
+    app.use(graphqlUploadExpress());
+
+    server.applyMiddleware({ app });
+
+    app.use(express.static('public'));
+    app.use(cors());
+
+    await new Promise((r) => app.listen({ port: 4000 }, r));
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+}
+startServer();
