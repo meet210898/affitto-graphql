@@ -1,10 +1,13 @@
 import React from "react";
 import {
   GET_ALL_COMPANIES,
+  GET_ALL_VEHICLES,
   GET_ALL_VEHICLETYPES,
 } from "../../../gqloperations/queries";
 import { CREATE_VEHICLES, UPLOAD_FILE } from "../../../gqloperations/mutation";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+
 import Typography from "@mui/material/Typography";
 import {
   Button,
@@ -19,6 +22,8 @@ import { Box, Card, CardActions, CardContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const AddVehicle = () => {
+  const navigate = useNavigate();
+
   const Input = styled("input")({
     display: "none",
   });
@@ -40,8 +45,9 @@ const AddVehicle = () => {
   });
 
   const [createVehicle] = useMutation(CREATE_VEHICLES, {
-    onCompleted: (data) => console.log("vehicle data==", data),
+    onCompleted: () => navigate("/Admin/viewVehicle"),
     onError: (err) => console.log("error in vehicle", err),
+    refetchQueries: [GET_ALL_VEHICLES, "vehicle"],
   });
 
   const [uploadFile] = useMutation(UPLOAD_FILE, {
@@ -53,7 +59,6 @@ const AddVehicle = () => {
   const companiesInfo = useQuery(GET_ALL_COMPANIES);
 
   if (vehicleTypeInfo?.loading) return <h1>Loading...</h1>;
-  console.log("vehicleData", vehicleData);
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "seats" || name === "door" || name === "priceperday") {

@@ -4,12 +4,16 @@ import {
   UPLOAD_FILE,
 } from "../../../gqloperations/mutation";
 import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+
 import Typography from "@mui/material/Typography";
 import { Button, TextField } from "@mui/material";
 import { Box, Card, CardActions, CardContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const AddVehicleType = () => {
+  const navigate = useNavigate();
+
   const Input = styled("input")({
     display: "none",
   });
@@ -20,7 +24,7 @@ const AddVehicleType = () => {
   });
 
   const [createVehicleType] = useMutation(CREATE_VEHICLE_TYPES, {
-    onCompleted: (data) => console.log("vehicle type data==", data),
+    onCompleted: () => navigate("/Admin/viewVehicleType"),
     onError: (err) => console.log("error in state", err),
   });
 
@@ -48,7 +52,8 @@ const AddVehicleType = () => {
     uploadFile({ variables: { file } });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     createVehicleType({
       variables: {
         vehicleTypeNew: vehicleTypeData,

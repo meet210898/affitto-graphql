@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { UPLOAD_FILE, CREATE_STATES } from "../../../gqloperations/mutation";
+import { GET_ALL_STATES } from "../../../gqloperations/queries";
+import { useNavigate } from "react-router-dom";
+
 import Typography from "@mui/material/Typography";
 import { Button, TextField, IconButton } from "@mui/material";
 import { Box, Card, CardActions, CardContent } from "@mui/material";
@@ -8,6 +11,8 @@ import { styled } from "@mui/material/styles";
 import { PhotoCamera } from "@mui/icons-material";
 
 const AddState = () => {
+  const navigate = useNavigate();
+
   const Input = styled("input")({
     // display: "none",
   });
@@ -23,8 +28,9 @@ const AddState = () => {
   });
 
   const [createState] = useMutation(CREATE_STATES, {
-    onCompleted: (data) => console.log("state data==", data),
+    onCompleted: () => navigate("/Admin/viewState"),
     onError: (err) => console.log("error in state", err),
+    refetchQueries: [GET_ALL_STATES, "states"],
   });
 
   const handleChange = (e) => {
@@ -46,7 +52,8 @@ const AddState = () => {
     uploadFile({ variables: { file } });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     createState({
       variables: {
         stateNew: stateData,

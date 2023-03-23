@@ -1,7 +1,9 @@
-import React from "react";
-import { GET_ALL_STATES } from "../../../gqloperations/queries";
+import React, { useState } from "react";
+import { GET_ALL_CITIES, GET_ALL_STATES } from "../../../gqloperations/queries";
 import { CREATE_CITIES, UPLOAD_FILE } from "../../../gqloperations/mutation";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+
 import Typography from "@mui/material/Typography";
 import {
   Button,
@@ -15,19 +17,22 @@ import { Box, Card, CardActions, CardContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const AddCity = () => {
+  const navigate = useNavigate();
+
   const Input = styled("input")({
     display: "none",
   });
 
-  const [cityData, setCityData] = React.useState({
+  const [cityData, setCityData] = useState({
     stateId: null,
     cityName: null,
     cityImage: "",
   });
 
   const [createCity] = useMutation(CREATE_CITIES, {
-    onCompleted: (data) => console.log("city data==", data),
+    onCompleted: () => navigate("/Admin/viewCity"),
     onError: (err) => console.log("error in state", err),
+    refetchQueries: [GET_ALL_CITIES, "city"],
   });
 
   const [uploadFile] = useMutation(UPLOAD_FILE, {
@@ -57,12 +62,13 @@ const AddCity = () => {
     uploadFile({ variables: { file } });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     createCity({
       variables: {
-        cityNew: cityData
-      }  
-    })
+        cityNew: cityData,
+      },
+    });
   };
 
   return (

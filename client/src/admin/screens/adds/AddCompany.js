@@ -1,7 +1,12 @@
 import React from "react";
-import { GET_ALL_VEHICLETYPES } from "../../../gqloperations/queries";
+import {
+  GET_ALL_COMPANIES,
+  GET_ALL_VEHICLETYPES,
+} from "../../../gqloperations/queries";
 import { CREATE_COMPANIES, UPLOAD_FILE } from "../../../gqloperations/mutation";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+
 import Typography from "@mui/material/Typography";
 import {
   Button,
@@ -15,6 +20,8 @@ import { Box, Card, CardActions, CardContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const AddCompany = () => {
+  const navigate = useNavigate();
+
   const Input = styled("input")({
     display: "none",
   });
@@ -26,8 +33,9 @@ const AddCompany = () => {
   });
 
   const [createCompany] = useMutation(CREATE_COMPANIES, {
-    onCompleted: (data) => console.log("company data==", data),
+    onCompleted: () => navigate("/Admin/viewCompany"),
     onError: (err) => console.log("error in company", err),
+    refetchQueries: [GET_ALL_COMPANIES, "company"],
   });
 
   const [uploadFile] = useMutation(UPLOAD_FILE, {
@@ -57,7 +65,8 @@ const AddCompany = () => {
     uploadFile({ variables: { file } });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     createCompany({
       variables: {
         companyNew: companyData,

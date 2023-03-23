@@ -147,14 +147,37 @@ const typeDefs = gql`
   type Mutation {
     signUpUser(userNew: UserInput): User
     signInUser(userSignin: UserSigninInput): Token
+    # State
     createState(stateNew: StateInput): String
+    updateState(stateUpdate: UpdateStateInput): String
+    deleteState(_id: DeleteInput): State
+    # City
     createCity(cityNew: CityInput): String
+    updateCity(cityUpdate: UpdateCityInput): String
+    deleteCity(_id: DeleteInput): City
+    # Vehicle Type
     createVehicleType(vehicleTypeNew: VehicleTypeInput): String
+    updateVehicleType(vehicleTypeUpdate: UpdateVehicleTypeInput): String
+    deleteVehicleType(_id: DeleteInput): VehicleType
+    # Company
     createCompany(companyNew: CompanyInput): String
+    updateCompany(companyUpdate: UpdateCompanyInput): String
+    deleteCompany(_id: DeleteInput): Company
+    #Vehicle
     createVehicle(vehicleNew: VehicleInput): String
+    updateVehicle(vehicleUpdate: UpdateVehicleInput): String
+    deleteVehicle(_id: DeleteInput): Vehicle
+    #Booking
     createBooking(bookingNew: BookingInput): String
+    # FAQ Category
     createFaqCategory(faqCategoryNew: FaqCategoryInput): String
+    updateFaqCategory(faqCategoryUpdate: UpdateFaqCategoryInput): String
+    deleteFaqCategory(_id: DeleteInput): FaqCategory
+    # FAQ
     createFaq(faqNew: FaqInput): String
+    updateFaq(faqUpdate: UpdateFaqInput): String
+    deleteFaq(_id: DeleteInput): Faq
+    # Upload file
     uploadFile(file: Upload!): File!
   }
 
@@ -183,13 +206,45 @@ const typeDefs = gql`
     typeImage: String
   }
 
+  input UpdateVehicleTypeInput {
+    _id: String
+    typeName: String
+    typeImage: String
+  }
+
   input CompanyInput {
     typeId: String
     companyName: String
     companyLogo: String
   }
 
+  input UpdateCompanyInput {
+    _id: String
+    typeId: String
+    companyName: String
+    companyLogo: String
+  }
+
   input VehicleInput {
+    typeId: String
+    companyId: String
+    vehicleName: String
+    vehicleImage: String
+    description: String
+    seats: Float
+    door: Float
+    fuelType: String
+    transmission: String
+    ac: Boolean
+    rcImage: String
+    rcNumber: String
+    pucImage: String
+    priceperday: Float
+    insuranceImage: String
+  }
+
+  input UpdateVehicleInput {
+    _id: String
     typeId: String
     companyId: String
     vehicleName: String
@@ -222,7 +277,20 @@ const typeDefs = gql`
     stateImage: String
   }
 
+  input UpdateStateInput {
+    _id: String
+    stateName: String
+    stateImage: String
+  }
+
   input CityInput {
+    stateId: String
+    cityName: String
+    cityImage: String
+  }
+
+  input UpdateCityInput {
+    _id: String
     stateId: String
     cityName: String
     cityImage: String
@@ -232,7 +300,23 @@ const typeDefs = gql`
     faqCategory: String
   }
 
+  input UpdateFaqCategoryInput {
+    _id: String
+    faqCategory: String
+  }
+
+  input DeleteInput {
+    _id: String
+  }
+
   input FaqInput {
+    faqCategoryId: String
+    question: String
+    answer: String
+  }
+
+  input UpdateFaqInput {
+    _id: String
     faqCategoryId: String
     question: String
     answer: String

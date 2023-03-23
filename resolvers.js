@@ -73,6 +73,7 @@ const resolvers = {
       const token = jwt.sign({ userId: user._id }, JWT_SECRET);
       return { token };
     },
+    // State
     createState: async (_, { stateNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -81,6 +82,29 @@ const resolvers = {
       await newState.save();
       return "State added!!";
     },
+    updateState: async (_, { stateUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await State.findOneAndUpdate(
+        { _id: stateUpdate._id },
+        {
+          $set: {
+            stateName: stateUpdate.stateName,
+            stateImage: stateUpdate.stateImage,
+          },
+        }
+      );
+      return "State Updated!!";
+    },
+    deleteState: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedState = await State.findOneAndDelete(_id);
+      return deletedState;
+    },
+    // City
     createCity: async (_, { cityNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -89,6 +113,30 @@ const resolvers = {
       await newCity.save();
       return "City added!!";
     },
+    updateCity: async (_, { cityUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await City.findOneAndUpdate(
+        { _id: cityUpdate._id },
+        {
+          $set: {
+            stateId: cityUpdate.stateId,
+            cityName: cityUpdate.cityName,
+            cityImage: cityUpdate.cityImage,
+          },
+        }
+      );
+      return "City Updated!!";
+    },
+    deleteCity: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedCity = await City.findOneAndDelete(_id);
+      return deletedCity;
+    },
+    // Vehicle Type
     createVehicleType: async (_, { vehicleTypeNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -97,6 +145,29 @@ const resolvers = {
       await newVehicleType.save();
       return "Vehicle type added!!";
     },
+    updateVehicleType: async (_, { vehicleTypeUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await VehicleType.findOneAndUpdate(
+        { _id: vehicleTypeUpdate._id },
+        {
+          $set: {
+            typeName: vehicleTypeUpdate.typeName,
+            typeImage: vehicleTypeUpdate.typeImage,
+          },
+        }
+      );
+      return "Vehicle Type Updated!!";
+    },
+    deleteVehicleType: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedVehicleType = await VehicleType.findOneAndDelete(_id);
+      return deletedVehicleType;
+    },
+    // Company
     createCompany: async (_, { companyNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -105,6 +176,30 @@ const resolvers = {
       await newCompany.save();
       return "Company added!!";
     },
+    updateCompany: async (_, { companyUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await Company.findOneAndUpdate(
+        { _id: companyUpdate._id },
+        {
+          $set: {
+            typeId: companyUpdate.typeId,
+            companyName: companyUpdate.companyName,
+            companyLogo: companyUpdate.companyLogo,
+          },
+        }
+      );
+      return "Company Updated!!";
+    },
+    deleteCompany: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedCompany = await Company.findOneAndDelete(_id);
+      return deletedCompany;
+    },
+    // Vehicle
     createVehicle: async (_, { vehicleNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -113,6 +208,14 @@ const resolvers = {
       await newVehicle.save();
       return "Vehicle added!!";
     },
+    deleteVehicle: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedVehicle = await Vehicle.findOneAndDelete(_id);
+      return deletedVehicle;
+    },
+    //Booking
     createBooking: async (_, { bookingNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -121,6 +224,8 @@ const resolvers = {
       await newBooking.save();
       return "Booking added!!";
     },
+
+    // FAQ Category
     createFaqCategory: async (_, { faqCategoryNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -129,6 +234,25 @@ const resolvers = {
       await newFaqCategory.save();
       return "FAQ Category added!!";
     },
+    updateFaqCategory: async (_, { faqCategoryUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await FaqCategory.findOneAndUpdate(
+        { _id: faqCategoryUpdate._id },
+        { $set: { faqCategory: faqCategoryUpdate.faqCategory } }
+      );
+      return "FAQ Category Updated!!";
+    },
+    deleteFaqCategory: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedFaqCategory = await FaqCategory.findOneAndDelete(_id);
+      return deletedFaqCategory;
+    },
+
+    // FAQ
     createFaq: async (_, { faqNew }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
@@ -137,6 +261,34 @@ const resolvers = {
       await newFaq.save();
       return "FAQ added!!";
     },
+    updateFaq: async (_, { faqUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await Faq.findOneAndUpdate(
+        { _id: faqUpdate._id },
+        {
+          $set: {
+            faqCategoryId: faqUpdate.faqCategoryId,
+            question: faqUpdate.question,
+            answer: faqUpdate.answer,
+          },
+        }
+      );
+      return "FAQ Updated!!";
+    },
+    deleteFaq: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const deletedFaq = await Faq.findOneAndDelete(_id).populate(
+        "faqCategoryId",
+        "_id faqCategory"
+      );
+      return deletedFaq;
+    },
+
+    // File upload
     uploadFile: async (_, { file }) => {
       const { createReadStream, filename } = await file;
 
