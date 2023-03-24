@@ -47,6 +47,7 @@ const resolvers = {
   },
   Mutation: {
     signUpUser: async (_, { userNew }) => {
+      console.log("userNew", userNew);
       const user = await User.findOne({ email: userNew.email });
       if (user) {
         throw new Error("User already exist with that email");
@@ -207,6 +208,18 @@ const resolvers = {
       const newVehicle = new Vehicle(vehicleNew);
       await newVehicle.save();
       return "Vehicle added!!";
+    },
+    updateVehicle: async (_, { vehicleUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await Vehicle.findOneAndUpdate(
+        { _id: vehicleUpdate._id },
+        {
+          $set: vehicleUpdate,
+        }
+      );
+      return "Vehicle Updated!!";
     },
     deleteVehicle: async (_, { _id }, { userId }) => {
       if (!userId) {

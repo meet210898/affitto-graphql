@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from './screens/Login';
 import Sidebar from './components/Sidebar';
 
+import Login from './screens/Login';
 import AddState from './screens/adds/AddState';
 import AddCity from './screens/adds/AddCity';
 import AddVehicleType from './screens/adds/AddVehicleType';

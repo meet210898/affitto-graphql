@@ -145,6 +145,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    # User Register and Login
     signUpUser(userNew: UserInput): User
     signInUser(userSignin: UserSigninInput): Token
     # State

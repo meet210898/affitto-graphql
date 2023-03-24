@@ -1,4 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  GET_ALL_COMPANIES,
+  GET_ALL_VEHICLES,
+  GET_ALL_VEHICLETYPES,
+} from "../../../gqloperations/queries";
+import { UPDATE_VEHICLES, UPLOAD_FILE } from "../../../gqloperations/mutation";
+
 import { Box, Typography, Modal, FormControl } from "@mui/material";
 import {
   Button,
@@ -44,7 +52,17 @@ const ModalCall = ({ open, setOpen, editData }) => {
     rcNumber: "",
     pucImage: "",
     priceperday: "",
+    insuranceImage: "",
   });
+  const [selectedImage, setSelectedImage] = useState({
+    vehicleImage: editData?.vehicleImage || "",
+    rcImage: editData?.rcImage || "",
+    pucImage: editData?.pucImage || "",
+    insuranceImage: editData?.insuranceImage || "",
+  });
+
+  const vehicleTypeInfo = useQuery(GET_ALL_VEHICLETYPES);
+  const companiesInfo = useQuery(GET_ALL_COMPANIES);
 
   useEffect(() => {
     if (editData) {
@@ -52,9 +70,50 @@ const ModalCall = ({ open, setOpen, editData }) => {
     }
   }, [editData]);
 
+  const [uploadFile] = useMutation(UPLOAD_FILE, {
+    onCompleted: (data) => console.log("data==", data),
+    onError: (err) => console.log("error in upload file", err),
+  });
+
+  const [updateVehicle] = useMutation(UPDATE_VEHICLES, {
+    onCompleted: (data) => console.log("vehicle data==", data),
+    onError: (err) => console.log("error in vehicle", err),
+    refetchQueries: [GET_ALL_VEHICLES, "vehicle"],
+  });
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+    delete vehicleData.__typename;
+    if (vehicleData.vehicleImage !== editData.vehicleImage) {
+      uploadFile({ variables: { file: selectedImage.vehicleImage } });
+    }
+    if (vehicleData.rcImage !== editData.rcImage) {
+      uploadFile({ variables: { file: selectedImage.rcImage } });
+    }
+    if (vehicleData.pucImage !== editData.pucImage) {
+      uploadFile({ variables: { file: selectedImage.pucImage } });
+    }
+    if (vehicleData.insuranceImage !== editData.insuranceImage) {
+      uploadFile({ variables: { file: selectedImage.insuranceImage } });
+    }
+
+    updateVehicle({
+      variables: {
+        vehicleUpdate: {
+          ...vehicleData,
+          companyId:
+            vehicleData.companyId !== editData.companyId
+              ? vehicleData.companyId
+              : vehicleData.companyId._id,
+          typeId:
+            vehicleData.typeId !== editData.typeId
+              ? vehicleData.typeId
+              : vehicleData.typeId._id,
+          _id: editData._id,
+        },
+      },
+    });
+
     handleClose();
   };
 
@@ -68,9 +127,12 @@ const ModalCall = ({ open, setOpen, editData }) => {
 
   const handleImageChange = (e) => {
     const { name, files } = e.target;
-    console.log(files);
     setVehicleData({
       ...vehicleData,
+      [name]: files[0].name,
+    });
+    setSelectedImage({
+      ...selectedImage,
       [name]: files[0],
     });
   };
@@ -86,13 +148,13 @@ const ModalCall = ({ open, setOpen, editData }) => {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <TextField
-          name="vehicleId"
-          type="hidden"
-          variant="standard"
-          value={editData && editData._id}
-        />
-        <div style={{ display: "flex", width: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-evenly",
+          }}
+        >
           <div>
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
@@ -103,10 +165,10 @@ const ModalCall = ({ open, setOpen, editData }) => {
                   id="typeId"
                   name="typeId"
                   label="Vehicle Type"
-                  defaultValue={editData && editData.typeId}
+                  defaultValue={editData && editData.typeId._id}
                   onChange={handleChange}
                 >
-                  {vehicleTypesInfo?.map((data) => (
+                  {vehicleTypeInfo?.data?.vehicleType?.map((data) => (
                     <MenuItem value={data._id}>{data.typeName}</MenuItem>
                   ))}
                 </Select>
@@ -123,11 +185,19 @@ const ModalCall = ({ open, setOpen, editData }) => {
                   name="companyId"
                   label="Company"
                   onChange={handleChange}
-                  defaultValue={editData && editData.companyId}
+                  defaultValue={editData && editData.companyId._id}
                 >
-                  {companiesInfo?.map((data) => (
-                    <MenuItem value={data._id}>{data.companyName}</MenuItem>
-                  ))}
+                  {companiesInfo?.data?.company
+                    ?.filter((item) =>
+                      editData?.typeId !== vehicleData.typeId
+                        ? vehicleData?.typeId === item.typeId._id
+                        : vehicleData?.typeId._id === item.typeId._id
+                    )
+                    .map((data) => {
+                      return (
+                        <MenuItem value={data._id}>{data.companyName}</MenuItem>
+                      );
+                    })}
                 </Select>
               </FormControl>
             </Box>
@@ -145,8 +215,8 @@ const ModalCall = ({ open, setOpen, editData }) => {
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               <img
                 src={
-                  selectedImage
-                    ? URL.createObjectURL(selectedImage)
+                  selectedImage.vehicleImage
+                    ? URL.createObjectURL(selectedImage.vehicleImage)
                     : `${REACT_APP_BASE_URL}/${
                         editData && editData.vehicleImage
                       }`
@@ -227,8 +297,8 @@ const ModalCall = ({ open, setOpen, editData }) => {
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               <img
                 src={
-                  selectedImage
-                    ? URL.createObjectURL(selectedImage)
+                  selectedImage.rcImage
+                    ? URL.createObjectURL(selectedImage.rcImage)
                     : `${REACT_APP_BASE_URL}/${editData && editData.rcImage}`
                 }
                 alt="rc"
@@ -266,8 +336,8 @@ const ModalCall = ({ open, setOpen, editData }) => {
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               <img
                 src={
-                  selectedImage
-                    ? URL.createObjectURL(selectedImage)
+                  selectedImage.pucImage
+                    ? URL.createObjectURL(selectedImage.pucImage)
                     : `${REACT_APP_BASE_URL}/${editData && editData.pucImage}`
                 }
                 alt="puc"
@@ -305,8 +375,8 @@ const ModalCall = ({ open, setOpen, editData }) => {
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               <img
                 src={
-                  selectedImage
-                    ? URL.createObjectURL(selectedImage)
+                  selectedImage.insuranceImage
+                    ? URL.createObjectURL(selectedImage.insuranceImage)
                     : `${REACT_APP_BASE_URL}/${
                         editData && editData.insuranceImage
                       }`

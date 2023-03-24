@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@mui/material";
 
+import ModalCall from "../EditModals/EditVehicle";
 import DeleteModal from "../DeleteModals";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -70,6 +71,7 @@ const VehicleList = () => {
         id={id}
         deleteItem={deleteVehicle}
       />
+      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -119,7 +121,15 @@ const VehicleList = () => {
                     alt="Vehicle"
                   />
                 </StyledTableCell>
-                <StyledTableCell align="left">
+                <StyledTableCell
+                  align="left"
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "250px",
+                  }}
+                >
                   {row.description}
                 </StyledTableCell>
                 <StyledTableCell align="left">{row.seats}</StyledTableCell>

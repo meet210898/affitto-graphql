@@ -1,9 +1,21 @@
 import { gql } from "@apollo/client";
 
+// User Signup & Login
 export const SIGNIN_USER = gql`
   mutation signInUser($userSignin: UserSigninInput) {
     user: signInUser(userSignin: $userSignin) {
       token
+    }
+  }
+`;
+
+export const SINGUP_USER = gql`
+  mutation signUpUser($userNew: UserInput) {
+    user: signUpUser(userNew: $userNew) {
+      firstName
+      lastName
+      email
+      username
     }
   }
 `;
@@ -111,6 +123,12 @@ export const DELETE_COMPANIES = gql`
 export const CREATE_VEHICLES = gql`
   mutation createVehicle($vehicleNew: VehicleInput) {
     vehicle: createVehicle(vehicleNew: $vehicleNew)
+  }
+`;
+
+export const UPDATE_VEHICLES = gql`
+  mutation updateVehicle($vehicleUpdate: UpdateVehicleInput) {
+    updateVehicle(vehicleUpdate: $vehicleUpdate)
   }
 `;
 
