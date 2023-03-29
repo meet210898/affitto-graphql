@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_ALL_CITIES, GET_ALL_STATES } from "../../../gqloperations/queries";
+import { UPDATE_CITIES, UPLOAD_FILE } from "../../../gqloperations/mutation";
+
 import { Box, Typography, Modal, FormControl } from "@mui/material";
 import {
   Button,
@@ -10,9 +14,6 @@ import {
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/CameraAlt";
 import { styled } from "@mui/material/styles";
-import { useMutation, useQuery } from "@apollo/client";
-import { GET_ALL_CITIES, GET_ALL_STATES } from "../../../gqloperations/queries";
-import { UPDATE_CITIES, UPLOAD_FILE } from "../../../gqloperations/mutation";
 
 const { REACT_APP_BASE_URL } = process.env;
 const style = {

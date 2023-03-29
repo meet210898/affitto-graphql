@@ -46,7 +46,7 @@ const ModalCall = ({ open, setOpen, editData }) => {
   const { error, data, loading } = useQuery(GET_ALL_FAQCATORIES);
   const [updateFaq] = useMutation(UPDATE_FAQS, {
     onCompleted: (data) => console.log("updated faq data==", data),
-    refetchQueries: [GET_ALL_FAQS, "faqCategory"],
+    // refetchQueries: [GET_ALL_FAQS, "faqCategory"],
   });
 
   if (loading) return <h1>Loading...</h1>;
@@ -56,7 +56,6 @@ const ModalCall = ({ open, setOpen, editData }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("faqData.faqCategoryId._id", faqData);
     updateFaq({
       variables: {
         faqUpdate: {
@@ -68,6 +67,20 @@ const ModalCall = ({ open, setOpen, editData }) => {
           question: faqData.question,
           answer: faqData.answer,
         },
+      },
+      update(cache, { data: { faq } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_FAQS,
+        });
+        let faqArr = [...recruit.faq];
+        const updateFaqIndex = faqArr.findIndex((data) => data._id === faq._id);
+        faqArr.splice(updateFaqIndex, 1, faq);
+        cache.writeQuery({
+          query: GET_ALL_FAQS,
+          data: {
+            faq: [...faqArr],
+          },
+        });
       },
     });
     handleClose();

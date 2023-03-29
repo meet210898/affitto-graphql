@@ -28,7 +28,7 @@ const userAuthLink = setContext((_, { headers }) => {
     headers: {
       ...headers,
       "Apollo-Require-Preflight": "true",
-      // authorization: localStorage.getItem("adminToken") || "",
+      authorization: localStorage.getItem("user-token") || "",
     },
   };
 });

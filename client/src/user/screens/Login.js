@@ -1,7 +1,9 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Topbar from "../components/Topbar";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { SIGNIN_USER } from "../../gqloperations/mutation";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -37,22 +39,38 @@ const theme = createTheme();
 const UserLoginScreen = () => {
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({});
+
+  const [userSignin, { loading, error }] = useMutation(SIGNIN_USER, {
+    onCompleted(data) {
+      localStorage.setItem("user-token", data.user.token);
+      navigate("/user/home");
+    },
+  });
+
+  if (loading) return <h1>Loading...</h1>;
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const emailId = data.get("email");
-    const pwd = data.get("password");
-    const loginData = {
-      email: emailId,
-      password: pwd,
-    };
-    // dispatch(loginUser(loginData));
+    userSignin({
+      variables: {
+        userSignin: formData,
+      },
+    });
   };
 
   return (
     <>
       <Topbar />
       <ThemeProvider theme={theme}>
+        {error && <div className="red card-panel">{error.message}</div>}
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
@@ -84,6 +102,7 @@ const UserLoginScreen = () => {
                 name="email"
                 autoComplete="email"
                 style={{ background: "white" }}
+                onChange={handleChange}
                 autoFocus
               />
               <TextField
@@ -96,6 +115,7 @@ const UserLoginScreen = () => {
                 id="password"
                 style={{ background: "white" }}
                 autoComplete="current-password"
+                onChange={handleChange}
               />
 
               <Button

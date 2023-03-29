@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { CREATE_FAQS } from "../../../gqloperations/mutation";
 import {
   GET_ALL_FAQCATORIES,
   GET_ALL_FAQS,
 } from "../../../gqloperations/queries";
-import { useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import {
@@ -19,13 +19,13 @@ import { Box, Card, CardActions, CardContent } from "@mui/material";
 
 const AddFaq = () => {
   const navigate = useNavigate();
-  const [faqData, setFaqData] = React.useState({});
+  const [faqData, setFaqData] = useState({});
   const [faq, { error, loading }] = useMutation(CREATE_FAQS, {
     onCompleted() {
       navigate("/Admin/viewFaq");
     },
-    refetchQueries: [GET_ALL_FAQS, "faq"],
   });
+
   const { data } = useQuery(GET_ALL_FAQCATORIES);
 
   if (loading) return <h1>Loading...</h1>;
@@ -44,6 +44,17 @@ const AddFaq = () => {
     faq({
       variables: {
         faqNew: faqData,
+      },
+      update(cache, { data: { faq } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_FAQS,
+        });
+        cache.writeQuery({
+          query: GET_ALL_FAQS,
+          data: {
+            faq: [faq, ...recruit.faq],
+          },
+        });
       },
     });
   };

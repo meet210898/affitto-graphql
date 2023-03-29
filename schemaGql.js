@@ -145,9 +145,12 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    # User Register and Login
+    # User Register
     signUpUser(userNew: UserInput): User
     signInUser(userSignin: UserSigninInput): Token
+    updateIsVerify(userVerify: userVerifyInput): String
+    userById(_id: DeleteInput): User
+    updateUser(userUpdate: userUpdateInput): String
     # State
     createState(stateNew: StateInput): String
     updateState(stateUpdate: UpdateStateInput): String
@@ -168,6 +171,7 @@ const typeDefs = gql`
     createVehicle(vehicleNew: VehicleInput): String
     updateVehicle(vehicleUpdate: UpdateVehicleInput): String
     deleteVehicle(_id: DeleteInput): Vehicle
+    vehicleByCompany(_id: String!): [Vehicle]
     #Booking
     createBooking(bookingNew: BookingInput): String
     # FAQ Category
@@ -175,8 +179,8 @@ const typeDefs = gql`
     updateFaqCategory(faqCategoryUpdate: UpdateFaqCategoryInput): String
     deleteFaqCategory(_id: DeleteInput): FaqCategory
     # FAQ
-    createFaq(faqNew: FaqInput): String
-    updateFaq(faqUpdate: UpdateFaqInput): String
+    createFaq(faqNew: FaqInput): Faq
+    updateFaq(faqUpdate: UpdateFaqInput): Faq
     deleteFaq(_id: DeleteInput): Faq
     # Upload file
     uploadFile(file: Upload!): File!
@@ -193,8 +197,26 @@ const typeDefs = gql`
     username: String
     email: String
     password: String
+    confirmPassword: String
     isVerify: Boolean
     personalImage: String
+  }
+
+  input userUpdateInput {
+    _id: String
+    firstName: String
+    lastName: String
+    phoneNumber: String
+    stateId: String
+    cityId: String
+    username: String
+    email: String
+    personalImage: String
+  }
+
+  input userVerifyInput {
+    _id: String
+    isVerify: Boolean
   }
 
   input UserSigninInput {

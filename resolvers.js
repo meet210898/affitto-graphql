@@ -43,21 +43,26 @@ const resolvers = {
         .populate("vehicleId", "_id vehicleName"),
     faqCategory: async () => await FaqCategory.find({}),
     faq: async () =>
-      await Faq.find({}).populate("faqCategoryId", "_id faqCategory"),
+      await Faq.find({})
+        .sort({ _id: -1 })
+        .populate("faqCategoryId", "_id faqCategory"),
   },
   Mutation: {
+    // User
     signUpUser: async (_, { userNew }) => {
-      console.log("userNew", userNew);
       const user = await User.findOne({ email: userNew.email });
       if (user) {
         throw new Error("User already exist with that email");
       }
-      const hashedPassword = await bcrypt.hash(userNew.password, 12);
-      const newUser = new User({
-        ...userNew,
-        password: hashedPassword,
-      });
-      return await newUser.save();
+      if (userNew.password === userNew.confirmPassword) {
+        const hashedPassword = await bcrypt.hash(userNew.password, 12);
+        delete userNew.confirmPassword;
+        const newUser = new User({
+          ...userNew,
+          password: hashedPassword,
+        });
+        return await newUser.save();
+      }
     },
     signInUser: async (_, { userSignin }) => {
       const user = await User.findOne({ email: userSignin.email });
@@ -73,6 +78,42 @@ const resolvers = {
       }
       const token = jwt.sign({ userId: user._id }, JWT_SECRET);
       return { token };
+    },
+    userById: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const user = await User.findById(_id)
+        .populate("stateId", "_id stateName")
+        .populate("cityId", "_id cityName");
+      return user;
+    },
+    updateIsVerify: async (_, { userVerify }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      await User.findOneAndUpdate(
+        { _id: userVerify._id },
+        {
+          $set: {
+            isVerify: userVerify.isVerify,
+          },
+        }
+      );
+      return "User Updated!!";
+    },
+    updateUser: async (_, { userUpdate }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      console.log("userUpdate==", userUpdate);
+      await User.findOneAndUpdate(
+        { _id: userUpdate._id },
+        {
+          $set: userUpdate,
+        }
+      );
+      return "User Updated!!";
     },
     // State
     createState: async (_, { stateNew }, { userId }) => {
@@ -228,6 +269,18 @@ const resolvers = {
       const deletedVehicle = await Vehicle.findOneAndDelete(_id);
       return deletedVehicle;
     },
+    vehicleByCompany: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const vehicleByCompany = await Vehicle.find({
+        companyId: _id,
+      })
+        .populate("typeId", "_id typeName")
+        .populate("companyId", "_id companyName");
+      console.log("vehicleByCompany", vehicleByCompany);
+      return vehicleByCompany;
+    },
     //Booking
     createBooking: async (_, { bookingNew }, { userId }) => {
       if (!userId) {
@@ -272,13 +325,13 @@ const resolvers = {
       }
       const newFaq = new Faq(faqNew);
       await newFaq.save();
-      return "FAQ added!!";
+      return newFaq;
     },
     updateFaq: async (_, { faqUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await Faq.findOneAndUpdate(
+      const updateFaq = await Faq.findOneAndUpdate(
         { _id: faqUpdate._id },
         {
           $set: {
@@ -286,9 +339,10 @@ const resolvers = {
             question: faqUpdate.question,
             answer: faqUpdate.answer,
           },
-        }
-      );
-      return "FAQ Updated!!";
+        },
+        { new: true }
+      ).populate("faqCategoryId", "_id faqCategory");
+      return updateFaq;
     },
     deleteFaq: async (_, { _id }, { userId }) => {
       if (!userId) {

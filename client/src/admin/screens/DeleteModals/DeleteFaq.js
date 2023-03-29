@@ -1,4 +1,8 @@
 import React from "react";
+import { useMutation } from "@apollo/client";
+import { DELETE_FAQS } from "../../../gqloperations/mutation";
+import { GET_ALL_FAQS } from "../../../gqloperations/queries";
+
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,22 +12,36 @@ import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-const DeleteModal = (props) => {
+const DeleteFaq = (props) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const { confirmDialog, setConfirmDialog, id, deleteItem, itemName, getItem } =
-    props;
+  const { confirmDialog, setConfirmDialog, id } = props;
 
   const handleClose = () => {
     setConfirmDialog(false);
   };
+  const [deleteFaq] = useMutation(DELETE_FAQS, {
+    onCompleted: (data) => console.log("deleted faq data==", data),
+  });
 
   const deleteHandler = () => {
-    deleteItem({
+    deleteFaq({
       variables: {
         deleteId: {
           _id: id,
         },
+      },
+      update(cache, { data: { faq } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_FAQS,
+        });
+        const newFaqArr = recruit.faq.filter((data) => data._id !== faq._id);
+        cache.writeQuery({
+          query: GET_ALL_FAQS,
+          data: {
+            faq: [...newFaqArr],
+          },
+        });
       },
     });
     handleClose();
@@ -64,4 +82,4 @@ const DeleteModal = (props) => {
   );
 };
 
-export default DeleteModal;
+export default DeleteFaq;

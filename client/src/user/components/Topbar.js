@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
+import jwt_decode from "jwt-decode";
 import { NavLink } from "react-router-dom";
 
 import logo from "../public/image/logo/logo.png";
@@ -20,15 +21,9 @@ import ProfileItem from "./profileItem";
 
 import "../components/css/topbar.css";
 import { styled } from "@mui/system";
-// import { makeStyles } from "@mui/styles";
+import { useMutation } from "@apollo/client";
+import { GET_USER_BY_ID } from "../../gqloperations/mutation";
 
-// const { REACT_APP_BASE_URL } = process.env;
-// const useStyles = makeStyles({
-//   root: {
-//     textTransform: "none",
-//     fontFamily: "Poppins",
-//   },
-// });
 const MyComponent = styled("root")({
   textTransform: "none",
   fontFamily: "Poppins",
@@ -45,34 +40,41 @@ const pages = [
 ];
 
 const TopBar = () => {
-  // const classes = useStyles();
+  const { REACT_APP_BASE_URL } = process.env;
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [userData, setUserData] = useState(null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
+  const [userById] = useMutation(GET_USER_BY_ID, {
+    onCompleted: (data) => setUserData(data.user),
+  });
+
+  const getUserById = (decodeUserId) => {
+    userById({
+      variables: {
+        id: {
+          _id: decodeUserId.userId,
+        },
+      },
+    });
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  useEffect(() => {
+    const userToken = localStorage.getItem("user-token") || "";
+    if (userToken) {
+      const decodeUserId = jwt_decode(userToken);
+      getUserById(decodeUserId);
+    }
+  }, []);
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("user-token")) {
-  //     const userId = localStorage.getItem("user-token");
-  //     const decodeUserId = jwt_decode(userId);
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
 
-  //     dispatch(listUserDetails(decodeUserId._id));
-  //   }
-  // }, [dispatch]);
+  const handleCloseNavMenu = () => setAnchorElNav(null);
+
+  const handleCloseUserMenu = () => setAnchorElUser(null);
 
   return (
     <AppBar style={{ backgroundColor: "white" }} position="sticky">
@@ -142,8 +144,11 @@ const TopBar = () => {
                     >
                       <MyComponent>
                         <MenuItem
-                          // className={classes.root}
-                          style={{ color: "black" }}
+                          style={{
+                            color: "black",
+                            textTransform: "none",
+                            fontFamily: "Poppins",
+                          }}
                           key={page}
                           onClick={handleCloseNavMenu}
                         >
@@ -209,7 +214,7 @@ const TopBar = () => {
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
                     alt="personalImage"
-                    // src={`${REACT_APP_BASE_URL}/${user?.personalImage}`}
+                    src={`${REACT_APP_BASE_URL}/${userData?.personalImage}`}
                   />
                 </IconButton>
               </Tooltip>

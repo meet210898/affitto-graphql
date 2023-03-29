@@ -20,6 +20,43 @@ export const SINGUP_USER = gql`
   }
 `;
 
+export const GET_USER_BY_ID = gql`
+  mutation userById($id: DeleteInput) {
+    user: userById(_id: $id) {
+      firstName
+      lastName
+      phoneNumber
+      address
+      pincode
+      stateId {
+        _id
+        stateName
+      }
+      cityId {
+        _id
+        cityName
+      }
+      username
+      email
+      password
+      isVerify
+      personalImage
+    }
+  }
+`;
+
+export const UPDATE_IS_VERIFY = gql`
+  mutation updateIsVerify($userVerify: userVerifyInput) {
+    user: updateIsVerify(userVerify: $userVerify)
+  }
+`;
+
+export const UPDATE_USER_PROFILE = gql`
+  mutation updateUser($userUpdate: userUpdateInput) {
+    user: updateUser(userUpdate: $userUpdate)
+  }
+`;
+
 // State
 export const CREATE_STATES = gql`
   mutation createState($stateNew: StateInput) {
@@ -144,6 +181,35 @@ export const DELETE_VEHICLES = gql`
   }
 `;
 
+export const VEHICLES_BY_COMPANY = gql`
+  mutation vehicleByCompany($id: String!) {
+    vehicle: vehicleByCompany(_id: $id) {
+      _id
+      typeId {
+        _id
+        typeName
+      }
+      companyId {
+        _id
+        companyName
+      }
+      vehicleName
+      vehicleImage
+      description
+      seats
+      door
+      fuelType
+      transmission
+      ac
+      rcImage
+      rcNumber
+      pucImage
+      priceperday
+      insuranceImage
+    }
+  }
+`;
+
 // FAQ Category
 export const CREATE_FAQ_CATEGORIES = gql`
   mutation faqCategory($faqCategoryNew: FaqCategoryInput) {
@@ -169,19 +235,36 @@ export const DELETE_FAQ_CATEGORIES = gql`
 // FAQ
 export const CREATE_FAQS = gql`
   mutation faq($faqNew: FaqInput) {
-    faq: createFaq(faqNew: $faqNew)
+    faq: createFaq(faqNew: $faqNew) {
+      _id
+      faqCategoryId {
+        _id
+        faqCategory
+      }
+      question
+      answer
+    }
   }
 `;
 
 export const UPDATE_FAQS = gql`
   mutation updateFaq($faqUpdate: UpdateFaqInput) {
-    faq: updateFaq(faqUpdate: $faqUpdate)
+    faq: updateFaq(faqUpdate: $faqUpdate) {
+      _id
+      faqCategoryId {
+        _id
+        faqCategory
+      }
+      question
+      answer
+    }
   }
 `;
 
 export const DELETE_FAQS = gql`
   mutation deleteFaq($deleteId: DeleteInput) {
     faq: deleteFaq(_id: $deleteId) {
+      _id
       faqCategoryId {
         _id
         faqCategory
