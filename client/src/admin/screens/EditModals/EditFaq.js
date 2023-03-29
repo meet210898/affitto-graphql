@@ -46,7 +46,6 @@ const ModalCall = ({ open, setOpen, editData }) => {
   const { error, data, loading } = useQuery(GET_ALL_FAQCATORIES);
   const [updateFaq] = useMutation(UPDATE_FAQS, {
     onCompleted: (data) => console.log("updated faq data==", data),
-    // refetchQueries: [GET_ALL_FAQS, "faqCategory"],
   });
 
   if (loading) return <h1>Loading...</h1>;

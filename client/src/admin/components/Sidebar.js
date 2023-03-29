@@ -24,9 +24,7 @@ import CarRentalIcon from "@mui/icons-material/CarRental";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import CategoryIcon from "@mui/icons-material/Category";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { Button, Collapse, Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import PersonIcon from "@mui/icons-material/Person";
@@ -39,14 +37,6 @@ const Sidebar = (props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const [open, setOpen] = React.useState({
-    State: false,
-    City: false,
-    VehicleType: false,
-    Company: false,
-    Vehicle: false,
-  });
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -54,18 +44,57 @@ const Sidebar = (props) => {
   const [, { client }] = useMutation(SIGNIN_USER);
 
   const pages = [
-    { page: "State", icon: <AddLocationAltIcon style={{ color: "white" }} /> },
-    { page: "City", icon: <LocationCityIcon style={{ color: "white" }} /> },
-    { page: "VehicleType", icon: <CarRentalIcon style={{ color: "white" }} /> },
-    { page: "Company", icon: <HouseIcon style={{ color: "white" }} /> },
-    { page: "Vehicle", icon: <DirectionsCarIcon style={{ color: "white" }} /> },
-    { page: "Faq", icon: <QuestionAnswerIcon style={{ color: "white" }} /> },
-    { page: "FaqCategory", icon: <CategoryIcon style={{ color: "white" }} /> },
+    {
+      page: "Dashboard",
+      icon: <DashboardIcon style={{ color: "white" }} />,
+      text: "Dashboard",
+    },
+    {
+      page: "User",
+      icon: <PersonIcon style={{ color: "white" }} />,
+      text: "User",
+    },
+    {
+      page: "Booking",
+      icon: <BookOnlineIcon style={{ color: "white" }} />,
+      text: "Booking",
+    },
+    {
+      page: "viewState",
+      icon: <AddLocationAltIcon style={{ color: "white" }} />,
+      text: "State",
+    },
+    {
+      page: "viewCity",
+      icon: <LocationCityIcon style={{ color: "white" }} />,
+      text: "City",
+    },
+    {
+      page: "viewVehicleType",
+      icon: <CarRentalIcon style={{ color: "white" }} />,
+      text: "Vehicle Type",
+    },
+    {
+      page: "viewCompany",
+      icon: <HouseIcon style={{ color: "white" }} />,
+      text: "Company",
+    },
+    {
+      page: "viewVehicle",
+      icon: <DirectionsCarIcon style={{ color: "white" }} />,
+      text: "Vehicle",
+    },
+    {
+      page: "viewFaq",
+      icon: <QuestionAnswerIcon style={{ color: "white" }} />,
+      text: "FAQ",
+    },
+    {
+      page: "viewFaqCategory",
+      icon: <CategoryIcon style={{ color: "white" }} />,
+      text: "FAQ Category",
+    },
   ];
-
-  const handleClick = (page) => {
-    setOpen({ ...open, [page]: !open[page] });
-  };
 
   const drawer = (
     <div>
@@ -84,108 +113,21 @@ const Sidebar = (props) => {
       </center>
       <Divider style={{ backgroundColor: "white", width: "100%" }} />
       <List>
-        <Link to={"/Admin/Dashboard"} style={{ textDecoration: "none" }}>
-          <ListItem key="Dashboard" disablePadding>
-            {/* <ListItemButton role={undefined} onClick={handleToggle(value)} dense> */}
-            <ListItemButton role={undefined} dense>
-              <ListItemIcon style={{ color: "white" }}>
-                <DashboardIcon />
-              </ListItemIcon>
-              <ListItemText
-                id="Dashboard"
-                primary={`Dashboard`}
-                style={{ color: "white" }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-        <Link to={"/Admin/User"} style={{ textDecoration: "none" }}>
-          <ListItem key="User" disablePadding>
-            {/* <ListItemButton role={undefined} onClick={handleToggle(value)} dense> */}
-            <ListItemButton role={undefined} dense>
-              <ListItemIcon style={{ color: "white" }}>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText
-                id="User"
-                primary={`User`}
-                style={{ color: "white" }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-        <Link to={"/Admin/Booking"} style={{ textDecoration: "none" }}>
-          <ListItem key="Booking" disablePadding>
-            <ListItemButton role={undefined} dense>
-              <ListItemIcon style={{ color: "white" }}>
-                <BookOnlineIcon />
-              </ListItemIcon>
-              <ListItemText
-                id="Booking"
-                primary={`Booking`}
-                style={{ color: "white" }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-
         {pages.map((item) => (
-          <>
-            <ListItemButton
-              className="navListItem"
-              onClick={() => handleClick(item.page)}
-            >
-              <ListItemIcon className="icon">{item.icon}</ListItemIcon>
-              <ListItemText style={{ color: "white" }} primary={item.page} />
-              {open[item.page] ? (
-                <ExpandLess style={{ color: "white" }} />
-              ) : (
-                <ExpandMore style={{ color: "white" }} />
-              )}
-            </ListItemButton>
-            <Collapse in={open[item.page]} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <Link
-                    to={`/Admin/add${item.page}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <ListItem key={`add${item.page}`} disablePadding>
-                      <ListItemButton role={undefined} dense>
-                        <ListItemIcon style={{ color: "white" }}>
-                          <ArrowForwardIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          id={`add${item.page}`}
-                          primary={`Add ${item.page}`}
-                          style={{ color: "white" }}
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  </Link>
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <Link
-                    to={`/Admin/view${item.page}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <ListItem key={`view${item.page}`} disablePadding>
-                      <ListItemButton role={undefined} dense>
-                        <ListItemIcon style={{ color: "white" }}>
-                          <ArrowForwardIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          id={`view${item.page}`}
-                          primary={`View ${item.page}`}
-                          style={{ color: "white" }}
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  </Link>
-                </ListItemButton>
-              </List>
-            </Collapse>
-          </>
+          <Link to={`/Admin/${item.page}`} style={{ textDecoration: "none" }}>
+            <ListItem key={`${item.page}`} disablePadding>
+              <ListItemButton role={undefined} dense>
+                <ListItemIcon style={{ color: "white" }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  id={`${item.page}`}
+                  primary={`${item.text}`}
+                  style={{ color: "white" }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
       <Divider style={{ backgroundColor: "white" }} />
@@ -247,14 +189,13 @@ const Sidebar = (props) => {
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           container={container}
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: "block", sm: "none" },
