@@ -11,13 +11,14 @@ const AddFaqCategory = () => {
   const navigate = useNavigate();
 
   const [faqCategoryData, setFaqCategoryData] = React.useState({});
-  const [faqCategory, { error, loading }] = useMutation(CREATE_FAQ_CATEGORIES, {
-    onCompleted() {
-      setFaqCategoryData({});
-      navigate("/Admin/viewFaqCategory");
-    },
-    refetchQueries: [GET_ALL_FAQCATORIES, "faqCategory"],
-  });
+  const [createFaqCategory, { error, loading }] = useMutation(
+    CREATE_FAQ_CATEGORIES,
+    {
+      onCompleted() {
+        navigate("/Admin/viewFaqCategory");
+      },
+    }
+  );
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -31,9 +32,20 @@ const AddFaqCategory = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    faqCategory({
+    createFaqCategory({
       variables: {
         faqCategoryNew: faqCategoryData,
+      },
+      update(cache, { data: { faqCategory } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_FAQCATORIES,
+        });
+        cache.writeQuery({
+          query: GET_ALL_FAQCATORIES,
+          data: {
+            faqCategory: [faqCategory, ...recruit.faqCategory],
+          },
+        });
       },
     });
   };

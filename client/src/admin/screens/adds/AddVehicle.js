@@ -47,7 +47,6 @@ const AddVehicle = () => {
   const [createVehicle] = useMutation(CREATE_VEHICLES, {
     onCompleted: () => navigate("/Admin/viewVehicle"),
     onError: (err) => console.log("error in vehicle", err),
-    refetchQueries: [GET_ALL_VEHICLES, "vehicle"],
   });
 
   const [uploadFile] = useMutation(UPLOAD_FILE, {
@@ -97,6 +96,17 @@ const AddVehicle = () => {
     createVehicle({
       variables: {
         vehicleNew: vehicleData,
+      },
+      update(cache, { data: { vehicle } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_VEHICLES,
+        });
+        cache.writeQuery({
+          query: GET_ALL_VEHICLES,
+          data: {
+            vehicle: [vehicle, ...recruit.vehicle],
+          },
+        });
       },
     });
   };

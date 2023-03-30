@@ -54,7 +54,6 @@ const ModalCall = ({ open, setOpen, editData }) => {
   const [updateCity] = useMutation(UPDATE_CITIES, {
     onCompleted: (data) => console.log("city data==", data),
     onError: (err) => console.log("error in city", err),
-    refetchQueries: [GET_ALL_CITIES, "city"],
   });
 
   const { error, data, loading } = useQuery(GET_ALL_STATES);
@@ -77,6 +76,22 @@ const ModalCall = ({ open, setOpen, editData }) => {
           cityName: cityData.cityName,
           cityImage: cityData.cityImage,
         },
+      },
+      update(cache, { data: { city } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_CITIES,
+        });
+        let cityArr = [...recruit.city];
+        const updateFaqIndex = cityArr.findIndex(
+          (data) => data._id === city._id
+        );
+        cityArr.splice(updateFaqIndex, 1, city);
+        cache.writeQuery({
+          query: GET_ALL_CITIES,
+          data: {
+            city: [...cityArr],
+          },
+        });
       },
     });
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { DELETE_FAQS } from "../../../gqloperations/mutation";
-import { GET_ALL_FAQS } from "../../../gqloperations/queries";
+import { DELETE_CITIES } from "../../../gqloperations/mutation";
+import { GET_ALL_CITIES } from "../../../gqloperations/queries";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -19,24 +19,24 @@ const DeleteFaq = (props) => {
 
   const handleClose = () => setConfirmDialog(false);
 
-  const [deleteFaq] = useMutation(DELETE_FAQS);
+  const [deleteCity] = useMutation(DELETE_CITIES);
 
   const deleteHandler = () => {
-    deleteFaq({
+    deleteCity({
       variables: {
         deleteId: {
           _id: id,
         },
       },
-      update(cache, { data: { faq } }) {
+      update(cache, { data: { city } }) {
         const recruit = cache.readQuery({
-          query: GET_ALL_FAQS,
+          query: GET_ALL_CITIES,
         });
-        const newFaqArr = recruit.faq.filter((data) => data._id !== faq._id);
+        const newCityArr = recruit.city.filter((data) => data._id !== city._id);
         cache.writeQuery({
-          query: GET_ALL_FAQS,
+          query: GET_ALL_CITIES,
           data: {
-            faq: [...newFaqArr],
+            city: [...newCityArr],
           },
         });
       },

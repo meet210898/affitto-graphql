@@ -54,29 +54,26 @@ const BookingList = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.booking
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell component="th" scope="row">
-                  {index + 1}
-                </StyledTableCell>
-                <StyledTableCell align="left">{`${row.userId.firstName} ${row.userId.lastName}`}</StyledTableCell>
-                <StyledTableCell align="left">
-                  {row.companyId.companyName}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {row.vehicleId.vehicleName}
-                </StyledTableCell>
-                <StyledTableCell align="left">{row.startDate}</StyledTableCell>
-                <StyledTableCell align="left">{row.endDate}</StyledTableCell>
-                <StyledTableCell align="left">{row.payment}</StyledTableCell>
-                <StyledTableCell align="left">
-                  {row.status ? "Approved" : "Pending"}
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+          {data?.booking?.map((row, index) => (
+            <StyledTableRow key={index}>
+              <StyledTableCell component="th" scope="row">
+                {index + 1}
+              </StyledTableCell>
+              <StyledTableCell align="left">{`${row.userId.firstName} ${row.userId.lastName}`}</StyledTableCell>
+              <StyledTableCell align="left">
+                {row.companyId.companyName}
+              </StyledTableCell>
+              <StyledTableCell align="left">
+                {row.vehicleId.vehicleName}
+              </StyledTableCell>
+              <StyledTableCell align="left">{row.startDate}</StyledTableCell>
+              <StyledTableCell align="left">{row.endDate}</StyledTableCell>
+              <StyledTableCell align="left">{row.payment}</StyledTableCell>
+              <StyledTableCell align="left">
+                {row.status ? "Approved" : "Pending"}
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

@@ -35,7 +35,6 @@ const AddCompany = () => {
   const [createCompany] = useMutation(CREATE_COMPANIES, {
     onCompleted: () => navigate("/Admin/viewCompany"),
     onError: (err) => console.log("error in company", err),
-    refetchQueries: [GET_ALL_COMPANIES, "company"],
   });
 
   const [uploadFile] = useMutation(UPLOAD_FILE, {
@@ -70,6 +69,17 @@ const AddCompany = () => {
     createCompany({
       variables: {
         companyNew: companyData,
+      },
+      update(cache, { data: { company } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_COMPANIES,
+        });
+        cache.writeQuery({
+          query: GET_ALL_COMPANIES,
+          data: {
+            company: [company, ...recruit.company],
+          },
+        });
       },
     });
   };

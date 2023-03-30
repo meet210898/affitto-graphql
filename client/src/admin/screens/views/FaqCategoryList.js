@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import { GET_ALL_FAQCATORIES } from "../../../gqloperations/queries";
 import { DELETE_FAQ_CATEGORIES } from "../../../gqloperations/mutation";
 
@@ -13,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 import ModalCall from "../EditModals/EditFaqCategory";
-import DeleteModal from "../DeleteModals";
+import DeleteFaqCategoryModal from "../DeleteModals/DeleteFaqCategory";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,7 +39,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const FaqCategoryList = (props) => {
+const FaqCategoryList = () => {
+  const navigate = useNavigate();
   const { error, data, loading } = useQuery(GET_ALL_FAQCATORIES);
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -51,11 +53,6 @@ const FaqCategoryList = (props) => {
     subTitle: "",
   });
 
-  const [deleteFaqCategory] = useMutation(DELETE_FAQ_CATEGORIES, {
-    onCompleted: (data) => console.log("deleted faq data==", data),
-    refetchQueries: [GET_ALL_FAQCATORIES, "faqCategory"],
-  });
-
   if (loading) return <h1>Loading...</h1>;
   if (error) {
     console.log("error", error);
@@ -64,27 +61,46 @@ const FaqCategoryList = (props) => {
   const editHandler = (row) => setEditData(row);
 
   return (
-    <TableContainer component={Paper}>
-      <DeleteModal
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        id={id}
-        deleteItem={deleteFaqCategory}
-      />
-      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>No</StyledTableCell>
-            <StyledTableCell align="left">FAQ Category Name</StyledTableCell>
-            <StyledTableCell align="left">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.faqCategory
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <Button
+          style={{
+            background: "black",
+            color: "white",
+          }}
+          onClick={() => navigate("/Admin/addFaqCategory")}
+        >
+          Add FAQ Category
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <DeleteFaqCategoryModal
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+          id={id}
+        />
+        <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell align="left">FAQ Category Name</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.faqCategory?.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   {index + 1}
@@ -122,9 +138,10 @@ const FaqCategoryList = (props) => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

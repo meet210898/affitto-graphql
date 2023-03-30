@@ -48,7 +48,6 @@ const ModalCall = ({ open, setOpen, editData }) => {
   const [updateState] = useMutation(UPDATE_STATES, {
     onCompleted: (data) => console.log("state data==", data),
     onError: (err) => console.log("error in state", err),
-    refetchQueries: [GET_ALL_STATES, "states"],
   });
 
   const handleSubmit = (event) => {
@@ -64,6 +63,22 @@ const ModalCall = ({ open, setOpen, editData }) => {
           stateName: stateData.stateName,
           stateImage: stateData.stateImage,
         },
+      },
+      update(cache, { data: { states } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_STATES,
+        });
+        let stateArr = [...recruit.state];
+        const updateStateIndex = stateArr.findIndex(
+          (data) => data._id === states._id
+        );
+        stateArr.splice(updateStateIndex, 1, states);
+        cache.writeQuery({
+          query: GET_ALL_STATES,
+          data: {
+            state: [...stateArr],
+          },
+        });
       },
     });
 
@@ -90,78 +105,76 @@ const ModalCall = ({ open, setOpen, editData }) => {
   };
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        onSubmit={handleSubmit}
-        component="form"
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            <TextField
-              label="State Name"
-              name="stateName"
-              type="text"
-              variant="standard"
-              defaultValue={editData && editData.stateName}
-              onChange={handleChange}
+    <Modal
+      open={open}
+      onClose={handleClose}
+      onSubmit={handleSubmit}
+      component="form"
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          <TextField
+            label="State Name"
+            name="stateName"
+            type="text"
+            variant="standard"
+            defaultValue={editData && editData.stateName}
+            onChange={handleChange}
+          />
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <img
+            src={
+              selectedImage
+                ? URL.createObjectURL(selectedImage)
+                : `${REACT_APP_BASE_URL}/${editData && editData.stateImage}`
+            }
+            alt="state"
+            height="120"
+            width="120"
+            style={{ borderRadius: "100%" }}
+          />
+          <label htmlFor="stateImage">
+            <Input
+              accept="image/*"
+              id="stateImage"
+              name="stateImage"
+              type="file"
+              onChange={handleImageChange}
             />
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <img
-              src={
-                selectedImage
-                  ? URL.createObjectURL(selectedImage)
-                  : `${REACT_APP_BASE_URL}/${editData && editData.stateImage}`
-              }
-              alt="state"
-              height="120"
-              width="120"
-              style={{ borderRadius: "100%" }}
-            />
-            <label htmlFor="stateImage">
-              <Input
-                accept="image/*"
-                id="stateImage"
-                name="stateImage"
-                type="file"
-                onChange={handleImageChange}
-              />
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="span"
-              >
-                <PhotoCamera />
-              </IconButton>
-            </label>
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Button
-              style={{
-                marginRight: "8px",
-                background: "#343E9A",
-              }}
-              type="submit"
-              variant="contained"
+            <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="span"
             >
-              Update
-            </Button>
-            <Button
-              type="submit"
-              onClick={handleClose}
-              variant="contained"
-              style={{ color: "black", background: "#FCE3E7" }}
-            >
-              Close
-            </Button>
-          </Typography>
-        </Box>
-      </Modal>
-    </div>
+              <PhotoCamera />
+            </IconButton>
+          </label>
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Button
+            style={{
+              marginRight: "8px",
+              background: "#343E9A",
+            }}
+            type="submit"
+            variant="contained"
+          >
+            Update
+          </Button>
+          <Button
+            type="submit"
+            onClick={handleClose}
+            variant="contained"
+            style={{ color: "black", background: "#FCE3E7" }}
+          >
+            Close
+          </Button>
+        </Typography>
+      </Box>
+    </Modal>
   );
 };
 

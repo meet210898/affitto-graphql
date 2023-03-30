@@ -78,7 +78,6 @@ const ModalCall = ({ open, setOpen, editData }) => {
   const [updateVehicle] = useMutation(UPDATE_VEHICLES, {
     onCompleted: (data) => console.log("vehicle data==", data),
     onError: (err) => console.log("error in vehicle", err),
-    refetchQueries: [GET_ALL_VEHICLES, "vehicle"],
   });
 
   const handleSubmit = (event) => {
@@ -111,6 +110,22 @@ const ModalCall = ({ open, setOpen, editData }) => {
               : vehicleData.typeId._id,
           _id: editData._id,
         },
+      },
+      update(cache, { data: { vehicle } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_VEHICLES,
+        });
+        let vehicleArr = [...recruit.vehicle];
+        const updateFaqIndex = vehicleArr.findIndex(
+          (data) => data._id === vehicle._id
+        );
+        vehicleArr.splice(updateFaqIndex, 1, vehicle);
+        cache.writeQuery({
+          query: GET_ALL_VEHICLES,
+          data: {
+            faq: [...vehicleArr],
+          },
+        });
       },
     });
 

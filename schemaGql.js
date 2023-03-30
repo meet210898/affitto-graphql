@@ -148,35 +148,35 @@ const typeDefs = gql`
     # User Register
     signUpUser(userNew: UserInput): User
     signInUser(userSignin: UserSigninInput): Token
-    updateIsVerify(userVerify: userVerifyInput): String
+    updateIsVerify(userVerify: userVerifyInput): User
     userById(_id: DeleteInput): User
     updateUser(userUpdate: userUpdateInput): String
     # State
-    createState(stateNew: StateInput): String
-    updateState(stateUpdate: UpdateStateInput): String
+    createState(stateNew: StateInput): State
+    updateState(stateUpdate: UpdateStateInput): State
     deleteState(_id: DeleteInput): State
     # City
-    createCity(cityNew: CityInput): String
-    updateCity(cityUpdate: UpdateCityInput): String
+    createCity(cityNew: CityInput): City
+    updateCity(cityUpdate: UpdateCityInput): City
     deleteCity(_id: DeleteInput): City
     # Vehicle Type
-    createVehicleType(vehicleTypeNew: VehicleTypeInput): String
-    updateVehicleType(vehicleTypeUpdate: UpdateVehicleTypeInput): String
+    createVehicleType(vehicleTypeNew: VehicleTypeInput): VehicleType
+    updateVehicleType(vehicleTypeUpdate: UpdateVehicleTypeInput): VehicleType
     deleteVehicleType(_id: DeleteInput): VehicleType
     # Company
-    createCompany(companyNew: CompanyInput): String
-    updateCompany(companyUpdate: UpdateCompanyInput): String
+    createCompany(companyNew: CompanyInput): Company
+    updateCompany(companyUpdate: UpdateCompanyInput): Company
     deleteCompany(_id: DeleteInput): Company
     #Vehicle
-    createVehicle(vehicleNew: VehicleInput): String
-    updateVehicle(vehicleUpdate: UpdateVehicleInput): String
+    createVehicle(vehicleNew: VehicleInput): Vehicle
+    updateVehicle(vehicleUpdate: UpdateVehicleInput): Vehicle
     deleteVehicle(_id: DeleteInput): Vehicle
     vehicleByCompany(_id: String!): [Vehicle]
     #Booking
     createBooking(bookingNew: BookingInput): String
     # FAQ Category
-    createFaqCategory(faqCategoryNew: FaqCategoryInput): String
-    updateFaqCategory(faqCategoryUpdate: UpdateFaqCategoryInput): String
+    createFaqCategory(faqCategoryNew: FaqCategoryInput): FaqCategory
+    updateFaqCategory(faqCategoryUpdate: UpdateFaqCategoryInput): FaqCategory
     deleteFaqCategory(_id: DeleteInput): FaqCategory
     # FAQ
     createFaq(faqNew: FaqInput): Faq

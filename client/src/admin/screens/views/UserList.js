@@ -38,7 +38,6 @@ const UserList = () => {
 
   const [updateIsVerify] = useMutation(UPDATE_IS_VERIFY, {
     onCompleted: (data) => console.log("updated user data==", data),
-    refetchQueries: [GET_ALL_USERS, "user"],
   });
 
   const { error, data, loading } = useQuery(GET_ALL_USERS);
@@ -54,6 +53,22 @@ const UserList = () => {
           _id: userId,
           isVerify: !isVerify,
         },
+      },
+      update(cache, { data: { user } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_USERS,
+        });
+        let userArr = [...recruit.user];
+        const updateStateIndex = userArr.findIndex(
+          (data) => data._id === user._id
+        );
+        userArr.splice(updateStateIndex, 1, user);
+        cache.writeQuery({
+          query: GET_ALL_USERS,
+          data: {
+            user: [...userArr],
+          },
+        });
       },
     });
   };
@@ -77,57 +92,52 @@ const UserList = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.user
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell component="th" scope="row">
-                  {index + 1}
-                </StyledTableCell>
-                <StyledTableCell align="left">{`${row.firstName} ${row.lastName}`}</StyledTableCell>
-                <StyledTableCell align="left">
-                  {row.phoneNumber}
-                </StyledTableCell>
-                <StyledTableCell align="left">{row.address}</StyledTableCell>
-                <StyledTableCell align="left">{row.pincode}</StyledTableCell>
-                <StyledTableCell align="left">
-                  {row.stateId.stateName}
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  {row.cityId === null
-                    ? "City is not defined"
-                    : row.cityId.cityName}
-                </StyledTableCell>
-                <StyledTableCell align="left">{row.username}</StyledTableCell>
-                <StyledTableCell align="left">{row.email}</StyledTableCell>
-                <StyledTableCell align="left">
-                  <Button
-                    variant="contained"
-                    style={{
-                      height: "auto",
-                      width: "auto",
-                      fontWeight: "bold",
-                    }}
-                    color={row.isVerify === true ? "success" : "error"}
-                    onClick={() => {
-                      editStatus(row._id, row.isVerify);
-                    }}
-                  >
-                    {row.isVerify ? "Verified" : "Not Verified"}
-                  </Button>
-                </StyledTableCell>
-                <StyledTableCell align="left">
-                  <img
-                    height="80px"
-                    width="80px"
-                    style={{ borderRadius: "100%" }}
-                    src={`${REACT_APP_BASE_URL}${row.personalImage}`}
-                    alt="Personal img"
-                  />
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+          {data?.user?.map((row, index) => (
+            <StyledTableRow key={index}>
+              <StyledTableCell component="th" scope="row">
+                {index + 1}
+              </StyledTableCell>
+              <StyledTableCell align="left">{`${row.firstName} ${row.lastName}`}</StyledTableCell>
+              <StyledTableCell align="left">{row.phoneNumber}</StyledTableCell>
+              <StyledTableCell align="left">{row.address}</StyledTableCell>
+              <StyledTableCell align="left">{row.pincode}</StyledTableCell>
+              <StyledTableCell align="left">
+                {row.stateId.stateName}
+              </StyledTableCell>
+              <StyledTableCell align="left">
+                {row.cityId === null
+                  ? "City is not defined"
+                  : row.cityId.cityName}
+              </StyledTableCell>
+              <StyledTableCell align="left">{row.username}</StyledTableCell>
+              <StyledTableCell align="left">{row.email}</StyledTableCell>
+              <StyledTableCell align="left">
+                <Button
+                  variant="contained"
+                  style={{
+                    height: "auto",
+                    width: "auto",
+                    fontWeight: "bold",
+                  }}
+                  color={row.isVerify === true ? "success" : "error"}
+                  onClick={() => {
+                    editStatus(row._id, row.isVerify);
+                  }}
+                >
+                  {row.isVerify ? "Verified" : "Not Verified"}
+                </Button>
+              </StyledTableCell>
+              <StyledTableCell align="left">
+                <img
+                  height="80px"
+                  width="80px"
+                  style={{ borderRadius: "100%" }}
+                  src={`${REACT_APP_BASE_URL}${row.personalImage}`}
+                  alt="Personal img"
+                />
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

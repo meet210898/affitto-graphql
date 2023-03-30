@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { DELETE_FAQS } from "../../../gqloperations/mutation";
-import { GET_ALL_FAQS } from "../../../gqloperations/queries";
+import { DELETE_VEHICLES } from "../../../gqloperations/mutation";
+import { GET_ALL_VEHICLES } from "../../../gqloperations/queries";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -12,31 +12,33 @@ import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-const DeleteFaq = (props) => {
+const DeleteVehicle = (props) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const { confirmDialog, setConfirmDialog, id } = props;
 
   const handleClose = () => setConfirmDialog(false);
 
-  const [deleteFaq] = useMutation(DELETE_FAQS);
+  const [deleteVehicle] = useMutation(DELETE_VEHICLES);
 
   const deleteHandler = () => {
-    deleteFaq({
+    deleteVehicle({
       variables: {
         deleteId: {
           _id: id,
         },
       },
-      update(cache, { data: { faq } }) {
+      update(cache, { data: { vehicle } }) {
         const recruit = cache.readQuery({
-          query: GET_ALL_FAQS,
+          query: GET_ALL_VEHICLES,
         });
-        const newFaqArr = recruit.faq.filter((data) => data._id !== faq._id);
+        const newVehicleArr = recruit.vehicle.filter(
+          (data) => data._id !== vehicle._id
+        );
         cache.writeQuery({
-          query: GET_ALL_FAQS,
+          query: GET_ALL_VEHICLES,
           data: {
-            faq: [...newFaqArr],
+            vehicle: [...newVehicleArr],
           },
         });
       },
@@ -77,4 +79,4 @@ const DeleteFaq = (props) => {
   );
 };
 
-export default DeleteFaq;
+export default DeleteVehicle;

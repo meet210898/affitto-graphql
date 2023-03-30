@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import { GET_ALL_VEHICLETYPES } from "../../../gqloperations/queries";
 import { DELETE_VEHICLE_TYPES } from "../../../gqloperations/mutation";
 
@@ -13,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 import ModalCall from "../EditModals/EditVehicleType";
-import DeleteModal from "../DeleteModals";
+import DeleteVehicleType from "../DeleteModals/DeleteVehicleType";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const VehicleTypeList = () => {
+  const navigate = useNavigate();
   const { REACT_APP_BASE_URL } = process.env;
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -50,11 +52,6 @@ const VehicleTypeList = () => {
     subTitle: "",
   });
 
-  const [deleteVehicleType] = useMutation(DELETE_VEHICLE_TYPES, {
-    onCompleted: (data) => console.log("deleted vehicle type data==", data),
-    refetchQueries: [GET_ALL_VEHICLETYPES, "city"],
-  });
-
   const { error, data, loading } = useQuery(GET_ALL_VEHICLETYPES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
@@ -64,28 +61,47 @@ const VehicleTypeList = () => {
   const editHandler = (row) => setEditData(row);
 
   return (
-    <TableContainer component={Paper}>
-      <DeleteModal
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        id={id}
-        deleteItem={deleteVehicleType}
-      />
-      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>No</StyledTableCell>
-            <StyledTableCell align="left">Vehicle Type Name</StyledTableCell>
-            <StyledTableCell align="left">Vehicle Type Image</StyledTableCell>
-            <StyledTableCell align="left">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.vehicleType
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <Button
+          style={{
+            background: "black",
+            color: "white",
+          }}
+          onClick={() => navigate("/Admin/addVehicleType")}
+        >
+          Add Vehicle Type
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <DeleteVehicleType
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+          id={id}
+        />
+        <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell align="left">Vehicle Type Name</StyledTableCell>
+              <StyledTableCell align="left">Vehicle Type Image</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.vehicleType?.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   {index + 1}
@@ -117,7 +133,6 @@ const VehicleTypeList = () => {
                     size="large"
                     style={{ color: "red" }}
                     onClick={() => {
-                      console.log("row", row);
                       setId(row._id);
                       setConfirmDialog({
                         isOpen: true,
@@ -131,9 +146,10 @@ const VehicleTypeList = () => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_STATES } from "../../../gqloperations/queries";
 import { DELETE_STATES } from "../../../gqloperations/mutation";
@@ -13,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 import ModalCall from "../EditModals/EditState";
-import DeleteModal from "../DeleteModals";
+import DeleteState from "../DeleteModals/DeleteState";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const StateList = () => {
+  const navigate = useNavigate();
   const { REACT_APP_BASE_URL } = process.env;
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -50,11 +52,6 @@ const StateList = () => {
     subTitle: "",
   });
 
-  const [deleteState] = useMutation(DELETE_STATES, {
-    onCompleted: (data) => console.log("deleted state data==", data),
-    refetchQueries: [GET_ALL_STATES, "states"],
-  });
-
   const { error, data, loading } = useQuery(GET_ALL_STATES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
@@ -64,28 +61,47 @@ const StateList = () => {
   const editHandler = (row) => setEditData(row);
 
   return (
-    <TableContainer component={Paper}>
-      <DeleteModal
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        id={id}
-        deleteItem={deleteState}
-      />
-      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>No</StyledTableCell>
-            <StyledTableCell align="left">State Name</StyledTableCell>
-            <StyledTableCell align="left">State Image</StyledTableCell>
-            <StyledTableCell align="left">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.state
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <Button
+          style={{
+            background: "black",
+            color: "white",
+          }}
+          onClick={() => navigate("/Admin/addState")}
+        >
+          Add State
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <DeleteState
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+          id={id}
+        />
+        <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell align="left">State Name</StyledTableCell>
+              <StyledTableCell align="left">State Image</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.state?.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   {index + 1}
@@ -130,9 +146,10 @@ const StateList = () => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

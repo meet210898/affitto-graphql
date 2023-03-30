@@ -30,7 +30,6 @@ const AddState = () => {
   const [createState] = useMutation(CREATE_STATES, {
     onCompleted: () => navigate("/Admin/viewState"),
     onError: (err) => console.log("error in state", err),
-    refetchQueries: [GET_ALL_STATES, "states"],
   });
 
   const handleChange = (e) => {
@@ -57,6 +56,17 @@ const AddState = () => {
     createState({
       variables: {
         stateNew: stateData,
+      },
+      update(cache, { data: { states } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_STATES,
+        });
+        cache.writeQuery({
+          query: GET_ALL_STATES,
+          data: {
+            state: [states, ...recruit.state],
+          },
+        });
       },
     });
   };

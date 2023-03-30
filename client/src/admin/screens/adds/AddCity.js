@@ -32,7 +32,6 @@ const AddCity = () => {
   const [createCity] = useMutation(CREATE_CITIES, {
     onCompleted: () => navigate("/Admin/viewCity"),
     onError: (err) => console.log("error in state", err),
-    refetchQueries: [GET_ALL_CITIES, "city"],
   });
 
   const [uploadFile] = useMutation(UPLOAD_FILE, {
@@ -67,6 +66,17 @@ const AddCity = () => {
     createCity({
       variables: {
         cityNew: cityData,
+      },
+      update(cache, { data: { city } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_CITIES,
+        });
+        cache.writeQuery({
+          query: GET_ALL_CITIES,
+          data: {
+            city: [city, ...recruit.city],
+          },
+        });
       },
     });
   };

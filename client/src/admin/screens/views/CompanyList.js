@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import { GET_ALL_COMPANIES } from "../../../gqloperations/queries";
 import { DELETE_COMPANIES } from "../../../gqloperations/mutation";
 
@@ -13,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 import ModalCall from "../EditModals/EditCompany";
-import DeleteModal from "../DeleteModals";
+import DeleteCompany from "../DeleteModals/DeleteCompany";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const CompanyList = () => {
+  const navigate = useNavigate();
   const { REACT_APP_BASE_URL } = process.env;
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -50,11 +52,6 @@ const CompanyList = () => {
     subTitle: "",
   });
 
-  const [deleteCompany] = useMutation(DELETE_COMPANIES, {
-    onCompleted: (data) => console.log("deleted city data==", data),
-    refetchQueries: [GET_ALL_COMPANIES, "company"],
-  });
-
   const { error, data, loading } = useQuery(GET_ALL_COMPANIES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
@@ -64,29 +61,48 @@ const CompanyList = () => {
   const editHandler = (row) => setEditData(row);
 
   return (
-    <TableContainer component={Paper}>
-      <DeleteModal
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        id={id}
-        deleteItem={deleteCompany}
-      />
-      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>No</StyledTableCell>
-            <StyledTableCell align="left">Vehicle Type</StyledTableCell>
-            <StyledTableCell align="left">Company Name</StyledTableCell>
-            <StyledTableCell align="left">Company Logo</StyledTableCell>
-            <StyledTableCell align="left">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.company
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <Button
+          style={{
+            background: "black",
+            color: "white",
+          }}
+          onClick={() => navigate("/Admin/addCompany")}
+        >
+          Add Company
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <DeleteCompany
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+          id={id}
+        />
+        <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell align="left">Vehicle Type</StyledTableCell>
+              <StyledTableCell align="left">Company Name</StyledTableCell>
+              <StyledTableCell align="left">Company Logo</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.company?.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   {index + 1}
@@ -137,9 +153,10 @@ const CompanyList = () => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

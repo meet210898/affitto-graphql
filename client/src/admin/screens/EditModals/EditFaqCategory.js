@@ -23,10 +23,7 @@ const style = {
 const ModalCall = ({ open, setOpen, editData }) => {
   const [faqCategoryData, setFaqCategoryData] = useState("");
 
-  const [updateFaqCategory] = useMutation(UPDATE_FAQ_CATEGORIES, {
-    onCompleted: (data) => console.log("updated faq data==", data),
-    refetchQueries: [GET_ALL_FAQCATORIES, "faqCategory"],
-  });
+  const [updateFaqCategory] = useMutation(UPDATE_FAQ_CATEGORIES);
 
   useEffect(() => {
     if (editData) {
@@ -43,6 +40,22 @@ const ModalCall = ({ open, setOpen, editData }) => {
           _id: editData._id,
           faqCategory: faqCategoryData,
         },
+      },
+      update(cache, { data: { faqCategory } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_FAQCATORIES,
+        });
+        let faqCategoryArr = [...recruit.faqCategory];
+        const updateFaqIndex = faqCategoryArr.findIndex(
+          (data) => data._id === faqCategory._id
+        );
+        faqCategoryArr.splice(updateFaqIndex, 1, faqCategory);
+        cache.writeQuery({
+          query: GET_ALL_FAQCATORIES,
+          data: {
+            faq: [...faqCategoryArr],
+          },
+        });
       },
     });
     handleClose();

@@ -59,7 +59,6 @@ const ModalCall = ({ open, setOpen, editData }) => {
   const [updateCompany] = useMutation(UPDATE_COMPANIES, {
     onCompleted: (data) => console.log("company data==", data),
     onError: (err) => console.log("error in company", err),
-    refetchQueries: [GET_ALL_COMPANIES, "company"],
   });
 
   const { error, data, loading } = useQuery(GET_ALL_VEHICLETYPES);
@@ -82,6 +81,22 @@ const ModalCall = ({ open, setOpen, editData }) => {
           companyName: companyData.companyName,
           companyLogo: companyData.companyLogo,
         },
+      },
+      update(cache, { data: { company } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_COMPANIES,
+        });
+        let companyArr = [...recruit.company];
+        const updateCompanyIndex = companyArr.findIndex(
+          (data) => data._id === company._id
+        );
+        companyArr.splice(updateCompanyIndex, 1, company);
+        cache.writeQuery({
+          query: GET_ALL_COMPANIES,
+          data: {
+            company: [...companyArr],
+          },
+        });
       },
     });
 

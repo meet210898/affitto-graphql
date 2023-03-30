@@ -25,23 +25,31 @@ const resolvers = {
   Query: {
     user: async () =>
       await User.find({})
+        .sort({ _id: -1 })
         .populate("stateId", "_id stateName")
         .populate("cityId", "_id cityName"),
-    state: async () => await State.find({}),
-    city: async () => await City.find({}).populate("stateId", "_id stateName"),
-    vehicleType: async () => await VehicleType.find({}),
+    state: async () => await State.find({}).sort({ _id: -1 }),
+    city: async () =>
+      await City.find({})
+        .sort({ _id: -1 })
+        .populate("stateId", "_id stateName"),
+    vehicleType: async () => await VehicleType.find({}).sort({ _id: -1 }),
     company: async () =>
-      await Company.find({}).populate("typeId", "_id typeName"),
+      await Company.find({})
+        .sort({ _id: -1 })
+        .populate("typeId", "_id typeName"),
     vehicle: async () =>
       await Vehicle.find({})
+        .sort({ _id: -1 })
         .populate("typeId", "_id typeName")
         .populate("companyId", "_id companyName"),
     booking: async () =>
       await Booking.find({})
+        .sort({ _id: -1 })
         .populate("userId", "_id firstName lastName")
         .populate("companyId", "_id companyName")
         .populate("vehicleId", "_id vehicleName"),
-    faqCategory: async () => await FaqCategory.find({}),
+    faqCategory: async () => await FaqCategory.find({}).sort({ _id: -1 }),
     faq: async () =>
       await Faq.find({})
         .sort({ _id: -1 })
@@ -92,21 +100,23 @@ const resolvers = {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await User.findOneAndUpdate(
+      const updateUser = await User.findOneAndUpdate(
         { _id: userVerify._id },
         {
           $set: {
             isVerify: userVerify.isVerify,
           },
-        }
-      );
-      return "User Updated!!";
+        },
+        { new: true }
+      )
+        .populate("stateId", "_id stateName")
+        .populate("cityId", "_id cityName");
+      return updateUser;
     },
     updateUser: async (_, { userUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      console.log("userUpdate==", userUpdate);
       await User.findOneAndUpdate(
         { _id: userUpdate._id },
         {
@@ -122,22 +132,23 @@ const resolvers = {
       }
       const newState = new State(stateNew);
       await newState.save();
-      return "State added!!";
+      return newState;
     },
     updateState: async (_, { stateUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await State.findOneAndUpdate(
+      const updateState = await State.findOneAndUpdate(
         { _id: stateUpdate._id },
         {
           $set: {
             stateName: stateUpdate.stateName,
             stateImage: stateUpdate.stateImage,
           },
-        }
+        },
+        { new: true }
       );
-      return "State Updated!!";
+      return updateState;
     },
     deleteState: async (_, { _id }, { userId }) => {
       if (!userId) {
@@ -153,13 +164,14 @@ const resolvers = {
       }
       const newCity = new City(cityNew);
       await newCity.save();
-      return "City added!!";
+      await newCity.populate("stateId", "_id stateName");
+      return newCity;
     },
     updateCity: async (_, { cityUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await City.findOneAndUpdate(
+      const updateCity = await City.findOneAndUpdate(
         { _id: cityUpdate._id },
         {
           $set: {
@@ -167,15 +179,19 @@ const resolvers = {
             cityName: cityUpdate.cityName,
             cityImage: cityUpdate.cityImage,
           },
-        }
-      );
-      return "City Updated!!";
+        },
+        { new: true }
+      ).populate("stateId", "_id stateName");
+      return updateCity;
     },
     deleteCity: async (_, { _id }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      const deletedCity = await City.findOneAndDelete(_id);
+      const deletedCity = await City.findOneAndDelete(_id).populate(
+        "stateId",
+        "_id stateName"
+      );
       return deletedCity;
     },
     // Vehicle Type
@@ -185,22 +201,23 @@ const resolvers = {
       }
       const newVehicleType = new VehicleType(vehicleTypeNew);
       await newVehicleType.save();
-      return "Vehicle type added!!";
+      return newVehicleType;
     },
     updateVehicleType: async (_, { vehicleTypeUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await VehicleType.findOneAndUpdate(
+      const updateVehicleType = await VehicleType.findOneAndUpdate(
         { _id: vehicleTypeUpdate._id },
         {
           $set: {
             typeName: vehicleTypeUpdate.typeName,
             typeImage: vehicleTypeUpdate.typeImage,
           },
-        }
+        },
+        { new: true }
       );
-      return "Vehicle Type Updated!!";
+      return updateVehicleType;
     },
     deleteVehicleType: async (_, { _id }, { userId }) => {
       if (!userId) {
@@ -216,13 +233,14 @@ const resolvers = {
       }
       const newCompany = new Company(companyNew);
       await newCompany.save();
-      return "Company added!!";
+      await newCompany.populate("typeId", "_id typeName");
+      return newCompany;
     },
     updateCompany: async (_, { companyUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await Company.findOneAndUpdate(
+      const updateCompany = await Company.findOneAndUpdate(
         { _id: companyUpdate._id },
         {
           $set: {
@@ -230,15 +248,19 @@ const resolvers = {
             companyName: companyUpdate.companyName,
             companyLogo: companyUpdate.companyLogo,
           },
-        }
-      );
-      return "Company Updated!!";
+        },
+        { new: true }
+      ).populate("typeId", "_id typeName");
+      return updateCompany;
     },
     deleteCompany: async (_, { _id }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      const deletedCompany = await Company.findOneAndDelete(_id);
+      const deletedCompany = await Company.findOneAndDelete(_id).populate(
+        "typeId",
+        "_id typeName"
+      );
       return deletedCompany;
     },
     // Vehicle
@@ -248,25 +270,32 @@ const resolvers = {
       }
       const newVehicle = new Vehicle(vehicleNew);
       await newVehicle.save();
-      return "Vehicle added!!";
+      await newVehicle.populate("typeId", "_id typeName");
+      await newVehicle.populate("companyId", "_id companyName");
+      return newVehicle;
     },
     updateVehicle: async (_, { vehicleUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await Vehicle.findOneAndUpdate(
+      const updateVehicle = await Vehicle.findOneAndUpdate(
         { _id: vehicleUpdate._id },
         {
           $set: vehicleUpdate,
-        }
-      );
-      return "Vehicle Updated!!";
+        },
+        { new: true }
+      )
+        .populate("typeId", "_id typeName")
+        .populate("companyId", "_id companyName");
+      return updateVehicle;
     },
     deleteVehicle: async (_, { _id }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      const deletedVehicle = await Vehicle.findOneAndDelete(_id);
+      const deletedVehicle = await Vehicle.findOneAndDelete(_id)
+        .populate("typeId", "_id typeName")
+        .populate("companyId", "_id companyName");
       return deletedVehicle;
     },
     vehicleByCompany: async (_, { _id }, { userId }) => {
@@ -278,7 +307,6 @@ const resolvers = {
       })
         .populate("typeId", "_id typeName")
         .populate("companyId", "_id companyName");
-      console.log("vehicleByCompany", vehicleByCompany);
       return vehicleByCompany;
     },
     //Booking
@@ -298,17 +326,18 @@ const resolvers = {
       }
       const newFaqCategory = new FaqCategory(faqCategoryNew);
       await newFaqCategory.save();
-      return "FAQ Category added!!";
+      return newFaqCategory;
     },
     updateFaqCategory: async (_, { faqCategoryUpdate }, { userId }) => {
       if (!userId) {
         throw new Error("You must be logged in");
       }
-      await FaqCategory.findOneAndUpdate(
+      const updateFaqCategory = await FaqCategory.findOneAndUpdate(
         { _id: faqCategoryUpdate._id },
-        { $set: { faqCategory: faqCategoryUpdate.faqCategory } }
+        { $set: { faqCategory: faqCategoryUpdate.faqCategory } },
+        { new: true }
       );
-      return "FAQ Category Updated!!";
+      return updateFaqCategory;
     },
     deleteFaqCategory: async (_, { _id }, { userId }) => {
       if (!userId) {
@@ -325,6 +354,7 @@ const resolvers = {
       }
       const newFaq = new Faq(faqNew);
       await newFaq.save();
+      await newFaq.populate("faqCategoryId", "_id faqCategory");
       return newFaq;
     },
     updateFaq: async (_, { faqUpdate }, { userId }) => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import { GET_ALL_VEHICLES } from "../../../gqloperations/queries";
 import { DELETE_VEHICLES } from "../../../gqloperations/mutation";
 
@@ -13,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 import ModalCall from "../EditModals/EditVehicle";
-import DeleteModal from "../DeleteModals";
+import DeleteVehicle from "../DeleteModals/DeleteVehicle";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const VehicleList = () => {
+  const navigate = useNavigate();
   const { REACT_APP_BASE_URL } = process.env;
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -50,11 +52,6 @@ const VehicleList = () => {
     subTitle: "",
   });
 
-  const [deleteVehicle] = useMutation(DELETE_VEHICLES, {
-    onCompleted: (data) => console.log("deleted vehicle data==", data),
-    refetchQueries: [GET_ALL_VEHICLES, "vehicle"],
-  });
-
   const { error, data, loading } = useQuery(GET_ALL_VEHICLES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
@@ -64,41 +61,60 @@ const VehicleList = () => {
   const editHandler = (row) => setEditData(row);
 
   return (
-    <TableContainer component={Paper}>
-      <DeleteModal
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        id={id}
-        deleteItem={deleteVehicle}
-      />
-      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>No</StyledTableCell>
-            <StyledTableCell align="left">Vehicle Type Name</StyledTableCell>
-            <StyledTableCell align="left">Company Name</StyledTableCell>
-            <StyledTableCell align="left">Vehicle Name</StyledTableCell>
-            <StyledTableCell align="left">Vehicle Image</StyledTableCell>
-            <StyledTableCell align="left">Description</StyledTableCell>
-            <StyledTableCell align="left">Seats</StyledTableCell>
-            <StyledTableCell align="left">Door</StyledTableCell>
-            <StyledTableCell align="left">Fuel type</StyledTableCell>
-            <StyledTableCell align="left">Transmission</StyledTableCell>
-            <StyledTableCell align="left">AC</StyledTableCell>
-            <StyledTableCell align="left">RC Number</StyledTableCell>
-            <StyledTableCell align="left">Price Per Day</StyledTableCell>
-            <StyledTableCell align="left">RC Image</StyledTableCell>
-            <StyledTableCell align="left">PUC Image</StyledTableCell>
-            <StyledTableCell align="left">Insurance Image</StyledTableCell>
-            <StyledTableCell align="left">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.vehicle
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <Button
+          style={{
+            background: "black",
+            color: "white",
+          }}
+          onClick={() => navigate("/Admin/addVehicle")}
+        >
+          Add Vehicle
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <DeleteVehicle
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+          id={id}
+        />
+        <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell align="left">Vehicle Type Name</StyledTableCell>
+              <StyledTableCell align="left">Company Name</StyledTableCell>
+              <StyledTableCell align="left">Vehicle Name</StyledTableCell>
+              <StyledTableCell align="left">Vehicle Image</StyledTableCell>
+              <StyledTableCell align="left">Description</StyledTableCell>
+              <StyledTableCell align="left">Seats</StyledTableCell>
+              <StyledTableCell align="left">Door</StyledTableCell>
+              <StyledTableCell align="left">Fuel type</StyledTableCell>
+              <StyledTableCell align="left">Transmission</StyledTableCell>
+              <StyledTableCell align="left">AC</StyledTableCell>
+              <StyledTableCell align="left">RC Number</StyledTableCell>
+              <StyledTableCell align="left">Price Per Day</StyledTableCell>
+              <StyledTableCell align="left">RC Image</StyledTableCell>
+              <StyledTableCell align="left">PUC Image</StyledTableCell>
+              <StyledTableCell align="left">Insurance Image</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.vehicle?.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   {index + 1}
@@ -202,9 +218,10 @@ const VehicleList = () => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import { GET_ALL_CITIES } from "../../../gqloperations/queries";
 import { DELETE_CITIES } from "../../../gqloperations/mutation";
 
@@ -13,10 +14,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 import ModalCall from "../EditModals/EditCity";
-import DeleteModal from "../DeleteModals";
+import DeleteCity from "../DeleteModals/DeleteCity";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const CityList = () => {
+  const navigate = useNavigate();
   const { REACT_APP_BASE_URL } = process.env;
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -49,12 +51,7 @@ const CityList = () => {
     title: "",
     subTitle: "",
   });
-
-  const [deleteCity] = useMutation(DELETE_CITIES, {
-    onCompleted: (data) => console.log("deleted city data==", data),
-    refetchQueries: [GET_ALL_CITIES, "city"],
-  });
-
+  
   const { error, data, loading } = useQuery(GET_ALL_CITIES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
@@ -64,29 +61,48 @@ const CityList = () => {
   const editHandler = (row) => setEditData(row);
 
   return (
-    <TableContainer component={Paper}>
-      <DeleteModal
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        id={id}
-        deleteItem={deleteCity}
-      />
-      <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>No</StyledTableCell>
-            <StyledTableCell align="left">State Name</StyledTableCell>
-            <StyledTableCell align="left">City Name</StyledTableCell>
-            <StyledTableCell align="left">City Image</StyledTableCell>
-            <StyledTableCell align="left">Action</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.city
-            ?.slice(0)
-            .reverse()
-            .map((row, index) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <Button
+          style={{
+            background: "black",
+            color: "white",
+          }}
+          onClick={() => navigate("/Admin/addCity")}
+        >
+          Add City
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <DeleteCity
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+          id={id}
+        />
+        <ModalCall open={openEdit} setOpen={setOpenEdit} editData={editData} />
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell align="left">State Name</StyledTableCell>
+              <StyledTableCell align="left">City Name</StyledTableCell>
+              <StyledTableCell align="left">City Image</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.city?.map((row, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   {index + 1}
@@ -121,7 +137,6 @@ const CityList = () => {
                     size="large"
                     style={{ color: "red" }}
                     onClick={() => {
-                      console.log("row", row);
                       setId(row._id);
                       setConfirmDialog({
                         isOpen: true,
@@ -135,9 +150,10 @@ const CityList = () => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

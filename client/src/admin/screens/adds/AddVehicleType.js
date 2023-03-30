@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import { Button, TextField } from "@mui/material";
 import { Box, Card, CardActions, CardContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { GET_ALL_VEHICLETYPES } from "../../../gqloperations/queries";
 
 const AddVehicleType = () => {
   const navigate = useNavigate();
@@ -57,6 +58,17 @@ const AddVehicleType = () => {
     createVehicleType({
       variables: {
         vehicleTypeNew: vehicleTypeData,
+      },
+      update(cache, { data: { vehicleType } }) {
+        const recruit = cache.readQuery({
+          query: GET_ALL_VEHICLETYPES,
+        });
+        cache.writeQuery({
+          query: GET_ALL_VEHICLETYPES,
+          data: {
+            vehicleType: [vehicleType, ...recruit.vehicleType],
+          },
+        });
       },
     });
   };
