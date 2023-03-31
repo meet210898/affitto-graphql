@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { GET_ALL_FAQCATORIES } from "../../../gqloperations/queries";
-import { DELETE_FAQ_CATEGORIES } from "../../../gqloperations/mutation";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -15,9 +14,12 @@ import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, IconButton } from "@mui/material";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 
 import ModalCall from "../EditModals/EditFaqCategory";
 import DeleteFaqCategoryModal from "../DeleteModals/DeleteFaqCategory";
+import TablePaginationActions from "../../components/TablePagination";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -53,10 +55,20 @@ const FaqCategoryList = () => {
     subTitle: "",
   });
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   if (loading) return <h1>Loading...</h1>;
   if (error) {
     console.log("error", error);
   }
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const editHandler = (row) => setEditData(row);
 
@@ -100,10 +112,16 @@ const FaqCategoryList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.faqCategory?.map((row, index) => (
-              <StyledTableRow key={index}>
+            {(rowsPerPage > 0
+              ? data?.faqCategory?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : data?.faqCategory
+            ).map((row, index) => (
+              <StyledTableRow key={page * rowsPerPage + (index + 1)}>
                 <StyledTableCell component="th" scope="row">
-                  {index + 1}
+                  {page * rowsPerPage + (index + 1)}
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   {row.faqCategory}
@@ -139,6 +157,25 @@ const FaqCategoryList = () => {
               </StyledTableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                count={data?.faqCategory?.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: {
+                    "aria-label": "rows per page",
+                  },
+                  native: true,
+                }}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
     </div>

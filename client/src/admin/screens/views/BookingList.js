@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_BOOKINGS } from "../../../gqloperations/queries";
 
@@ -10,6 +10,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
+
+import TablePaginationActions from "../../components/TablePagination";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,10 +37,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const BookingList = () => {
   const { error, data, loading } = useQuery(GET_ALL_BOOKINGS);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   if (loading) return <h1>Loading...</h1>;
   if (error) {
     console.log("error", error);
   }
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -54,10 +69,16 @@ const BookingList = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.booking?.map((row, index) => (
-            <StyledTableRow key={index}>
+          {(rowsPerPage > 0
+            ? data?.booking?.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : data?.booking
+          ).map((row, index) => (
+            <StyledTableRow key={page * rowsPerPage + (index + 1)}>
               <StyledTableCell component="th" scope="row">
-                {index + 1}
+                {page * rowsPerPage + (index + 1)}
               </StyledTableCell>
               <StyledTableCell align="left">{`${row.userId.firstName} ${row.userId.lastName}`}</StyledTableCell>
               <StyledTableCell align="left">
@@ -75,6 +96,25 @@ const BookingList = () => {
             </StyledTableRow>
           ))}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+              count={data?.booking?.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              SelectProps={{
+                inputProps: {
+                  "aria-label": "rows per page",
+                },
+                native: true,
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
       </Table>
     </TableContainer>
   );

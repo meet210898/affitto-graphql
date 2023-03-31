@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_USERS } from "../../../gqloperations/queries";
+import { UPDATE_IS_VERIFY } from "../../../gqloperations/mutation";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -11,7 +12,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button } from "@mui/material";
-import { UPDATE_IS_VERIFY } from "../../../gqloperations/mutation";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
+
+import TablePaginationActions from "../../components/TablePagination";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -40,11 +44,21 @@ const UserList = () => {
     onCompleted: (data) => console.log("updated user data==", data),
   });
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const { error, data, loading } = useQuery(GET_ALL_USERS);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
     console.log("error", error);
   }
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const editStatus = (userId, isVerify) => {
     updateIsVerify({
@@ -92,10 +106,16 @@ const UserList = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.user?.map((row, index) => (
-            <StyledTableRow key={index}>
+          {(rowsPerPage > 0
+            ? data?.user?.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : data?.user
+          ).map((row, index) => (
+            <StyledTableRow key={page * rowsPerPage + (index + 1)}>
               <StyledTableCell component="th" scope="row">
-                {index + 1}
+                {page * rowsPerPage + (index + 1)}
               </StyledTableCell>
               <StyledTableCell align="left">{`${row.firstName} ${row.lastName}`}</StyledTableCell>
               <StyledTableCell align="left">{row.phoneNumber}</StyledTableCell>
@@ -139,6 +159,25 @@ const UserList = () => {
             </StyledTableRow>
           ))}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+              count={data?.user?.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              SelectProps={{
+                inputProps: {
+                  "aria-label": "rows per page",
+                },
+                native: true,
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
       </Table>
     </TableContainer>
   );

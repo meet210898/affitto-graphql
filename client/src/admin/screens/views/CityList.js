@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { GET_ALL_CITIES } from "../../../gqloperations/queries";
-import { DELETE_CITIES } from "../../../gqloperations/mutation";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -15,9 +14,12 @@ import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, IconButton } from "@mui/material";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 
 import ModalCall from "../EditModals/EditCity";
 import DeleteCity from "../DeleteModals/DeleteCity";
+import TablePaginationActions from "../../components/TablePagination";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -51,12 +53,22 @@ const CityList = () => {
     title: "",
     subTitle: "",
   });
-  
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const { error, data, loading } = useQuery(GET_ALL_CITIES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
     console.log("error", error);
   }
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const editHandler = (row) => setEditData(row);
 
@@ -102,10 +114,16 @@ const CityList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.city?.map((row, index) => (
-              <StyledTableRow key={index}>
+            {(rowsPerPage > 0
+              ? data?.city?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : data?.city
+            ).map((row, index) => (
+              <StyledTableRow key={page * rowsPerPage + (index + 1)}>
                 <StyledTableCell component="th" scope="row">
-                  {index + 1}
+                  {page * rowsPerPage + (index + 1)}
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   {row.stateId.stateName}
@@ -151,6 +169,25 @@ const CityList = () => {
               </StyledTableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                count={data?.city?.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: {
+                    "aria-label": "rows per page",
+                  },
+                  native: true,
+                }}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
     </div>
