@@ -92,7 +92,7 @@ const Category = () => {
             <Grid xs={10} md={12} style={{ position: "relative" }}>
               <h3 style={{ margin: "0px" }}>Explore Vehicle</h3>
               <Grid container display="flex">
-                {vehiclesInfo?.data?.vehicle.map((row) => (
+                {vehiclesInfo?.data?.vehicle.slice(0, 2).map((row) => (
                   <NavLink to={`/user/VehicleDetails/${row._id}`}>
                     <Card
                       sx={{

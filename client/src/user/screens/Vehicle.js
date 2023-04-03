@@ -29,10 +29,6 @@ const Vehicle = () => {
 
   const companiesInfo = useQuery(GET_ALL_COMPANIES);
   const vehiclesInfo = useQuery(GET_ALL_VEHICLES);
-  // React.useEffect(() => {
-  //   dispatch(getCompany(0));
-  //   dispatch(listVehicle(0));
-  // }, [dispatch]);
 
   const detailHandler = (vehicleId) => {
     navigate(`/user/VehicleDetails/${vehicleId}`);
@@ -56,7 +52,7 @@ const Vehicle = () => {
             </ImageListItem>
           </ImageList>
           <Grid container display="flex">
-            {vehiclesInfo?.data?.vehicle.map((row) => (
+            {vehiclesInfo?.data?.vehicle.slice(0, 6).map((row) => (
               <Grid md={4} style={{ width: "100%" }}>
                 <Card
                   sx={{
