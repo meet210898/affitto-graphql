@@ -342,6 +342,64 @@ export const VEHICLES_BY_COMPANY = gql`
   }
 `;
 
+export const VEHICLES_BY_TYPE = gql`
+  mutation vehicleByType($id: String) {
+    vehicle: vehicleByType(_id: $id) {
+      _id
+      typeId {
+        _id
+        typeName
+      }
+      companyId {
+        _id
+        companyName
+      }
+      vehicleName
+      vehicleImage
+      description
+      seats
+      door
+      fuelType
+      transmission
+      ac
+      rcImage
+      rcNumber
+      pucImage
+      priceperday
+      insuranceImage
+    }
+  }
+`;
+
+export const VEHICLES_DETAILS = gql`
+  mutation vehicleDetails($id: String) {
+    vehicle: vehicleDetails(_id: $id) {
+      _id
+      typeId {
+        _id
+        typeName
+      }
+      companyId {
+        _id
+        companyName
+      }
+      vehicleName
+      vehicleImage
+      description
+      seats
+      door
+      fuelType
+      transmission
+      ac
+      rcImage
+      rcNumber
+      pucImage
+      priceperday
+      insuranceImage
+    }
+  }
+`;
+
 // FAQ Category
 export const CREATE_FAQ_CATEGORIES = gql`
   mutation createFaqCategory($faqCategoryNew: FaqCategoryInput) {
@@ -409,6 +467,57 @@ export const DELETE_FAQS = gql`
       }
       question
       answer
+    }
+  }
+`;
+
+//Booking
+export const CREATE_BOOKING = gql`
+  mutation createBooking($bookingNew: BookingInput) {
+    booking: createBooking(bookingNew: $bookingNew) {
+      _id
+      userId {
+        _id
+        firstName
+        lastName
+      }
+      companyId {
+        _id
+        companyName
+      }
+      vehicleId {
+        _id
+        vehicleName
+      }
+      payment
+      startDate
+      endDate
+      status
+    }
+  }
+`;
+
+export const BOOKING_BY_USERID = gql`
+  mutation bookingByUserId($id: String) {
+    booking: bookingByUserId(_id: $id) {
+      _id
+      userId {
+        _id
+        firstName
+        lastName
+      }
+      companyId {
+        _id
+        companyName
+      }
+      vehicleId {
+        _id
+        vehicleName
+      }
+      payment
+      startDate
+      endDate
+      status
     }
   }
 `;

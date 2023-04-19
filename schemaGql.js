@@ -172,8 +172,11 @@ const typeDefs = gql`
     updateVehicle(vehicleUpdate: UpdateVehicleInput): Vehicle
     deleteVehicle(_id: DeleteInput): Vehicle
     vehicleByCompany(_id: String!): [Vehicle]
+    vehicleByType(_id: String): [Vehicle]
+    vehicleDetails(_id: String): Vehicle
     #Booking
-    createBooking(bookingNew: BookingInput): String
+    createBooking(bookingNew: BookingInput): Booking
+    bookingByUserId(_id: String): [Booking]
     # FAQ Category
     createFaqCategory(faqCategoryNew: FaqCategoryInput): FaqCategory
     updateFaqCategory(faqCategoryUpdate: UpdateFaqCategoryInput): FaqCategory

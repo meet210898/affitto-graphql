@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { useMutation, useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 import {
   GET_USER_BY_ID,
   UPDATE_USER_PROFILE,
@@ -40,6 +41,7 @@ const Input = styled("input")({
 
 const UserProfile = () => {
   const { REACT_APP_BASE_URL } = process.env;
+  const { t } = useTranslation("common");
 
   const [value, setValue] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
@@ -130,7 +132,7 @@ const UserProfile = () => {
     });
     getUserById(decodeUserId);
   };
-  console.log("user", user);
+
   return (
     <>
       <Grid>
@@ -204,18 +206,18 @@ const UserProfile = () => {
               </Grid>
 
               <Grid container>
-                <h2>Your Details</h2>
+                <h2>{t("PROFILE.DETAILS")}</h2>
               </Grid>
               <Grid xs={12} container>
                 <Grid display="block" xs={12}>
                   <Typography mt={2} style={{ margin: "0px" }} component="div">
-                    <b>Email</b>{" "}
+                    <b>{t("PROFILE.EMAIL")}</b>
                   </Typography>
                 </Grid>
                 <Grid display="block" xs={6}>
                   <p style={{ margin: "0px" }}>{user?.email}</p>
                   <Typography marginTop="30px" mt={2} component="div">
-                    <b>City</b>{" "}
+                    <b>{t("PROFILE.CITY")}</b>
                     <IconButton
                       onClick={(event) => {
                         handleClick(event);
@@ -244,7 +246,7 @@ const UserProfile = () => {
                     })}
                   </p>
                   <Typography marginTop="30px" mt={2} component="div">
-                    <b>Phone</b>{" "}
+                    <b>{t("PROFILE.PHONE")}</b>{" "}
                     <IconButton
                       onClick={(event) => {
                         handleClick(event);
@@ -264,7 +266,7 @@ const UserProfile = () => {
                 </Grid>
                 <Grid style={{ marginTop: "20px" }} xs={6}>
                   <Typography mt={2} component="div">
-                    <b>Username</b>{" "}
+                    <b>{t("PROFILE.USERNAME")}</b>{" "}
                     <IconButton
                       onClick={(event) => {
                         handleClick(event);

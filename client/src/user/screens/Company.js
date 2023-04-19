@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 import { GET_ALL_COMPANIES } from "../../gqloperations/queries";
 
 import Topbar from "../components/Topbar";
@@ -16,6 +17,7 @@ import CardMedia from "@mui/material/CardMedia";
 
 const { REACT_APP_BASE_URL } = process.env;
 const Company = () => {
+  const { t } = useTranslation("common");
   const { error, data, loading } = useQuery(GET_ALL_COMPANIES);
   if (loading) return <h1>Loading...</h1>;
   if (error) {
@@ -31,7 +33,7 @@ const Company = () => {
           <ImageList>
             <ImageListItem key="Subheader">
               <ListSubheader component="div" style={{ background: "none" }}>
-                Company
+                {t("COMPANY")}
               </ListSubheader>
             </ImageListItem>
           </ImageList>

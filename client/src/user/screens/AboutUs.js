@@ -1,17 +1,23 @@
-import * as React from "react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import Topbar from "../components/Topbar";
+
 import img from "../public/image/aboutus/aboutus.jpg";
 import registerUser from "../public/image/aboutus/registerUser.png";
 import vehicleType from "../public/image/aboutus/type.jpg";
 import selectVehicle from "../public/image/aboutus/selectVehicle.png";
+
 import Card from "@mui/material/Card";
 import { Grid } from "@mui/material";
 import "../components/css/imgTxt.css";
 import Footer from "../components/footer";
 
 const AboutUs = () => {
-  const [isReadMorePurpose, setIsReadMorePurpose] = React.useState(true);
-  const [isReadMoreGoal, setIsReadMoreGoal] = React.useState(true);
+  const { t } = useTranslation("common");
+
+  const [isReadMorePurpose, setIsReadMorePurpose] = useState(true);
+  const [isReadMoreGoal, setIsReadMoreGoal] = useState(true);
   const toggleReadMorePurpose = () => {
     setIsReadMorePurpose(!isReadMorePurpose);
   };
@@ -48,11 +54,11 @@ const AboutUs = () => {
           />
           <Grid container>
             <Grid xs={10} md={6}>
-              <h1 className="imgTitleAbout">Who we are</h1>
+              <h1 className="imgTitleAbout">{t("ABOUT_US.WHO_WE_ARE")}</h1>
             </Grid>
           </Grid>
           <Grid xs={8} md={8}>
-            <p className="descriptionAbout">Go Fast, Go Safe.</p>
+            <p className="descriptionAbout">{t("ABOUT_US.GO_FAST_SLOW")}</p>
           </Grid>
         </div>
       </div>
@@ -68,7 +74,7 @@ const AboutUs = () => {
             variant="outlined"
           >
             <p style={{ marginTop: "0px" }} className="myfont">
-              Main Purpose?
+              {t("ABOUT_US.MAIN_PURPOSE")}
             </p>
             {isReadMorePurpose ? purpose.slice(0, 150) : purpose}
             <span onClick={toggleReadMorePurpose} className="read-or-hide">
@@ -86,7 +92,7 @@ const AboutUs = () => {
             variant="outlined"
           >
             <p style={{ marginTop: "0px" }} className="myfont">
-              Our Goal
+              {t("ABOUT_US.OUR_GOAL")}
             </p>
             {isReadMoreGoal ? goal.slice(0, 150) : goal}
             <span onClick={toggleReadMoreGoal} className="read-or-hide">
@@ -99,7 +105,7 @@ const AboutUs = () => {
       </Grid>
       <Grid container marginBottom="20px">
         <Grid xs={12} md={12} justifyContent="center" display="flex">
-          <h2>How it works</h2>
+          <h2>{t("ABOUT_US.HOW_IT_WORKS")}</h2>
         </Grid>
         <Grid xs={1} md={2}></Grid>
         <Grid xs={10} md={8}>
@@ -116,10 +122,10 @@ const AboutUs = () => {
             <Grid xs={9} md={9}>
               <Card style={{ padding: "15px" }} variant="outlined">
                 <p className="myfont" style={{ margin: "0px" }}>
-                  Register an Account
+                  {t("ABOUT_US.REGISTER_ACCOUNT")}
                 </p>
-                <p>Registration of User</p>
-                <b>Register New User </b>
+                <p>{t("ABOUT_US.REGISTER_USER")}</p>
+                <b>{t("ABOUT_US.REGISTER_NEW_USER")}</b>
               </Card>
             </Grid>
           </Grid>
@@ -136,10 +142,10 @@ const AboutUs = () => {
             <Grid xs={9} md={9}>
               <Card style={{ padding: "15px" }} variant="outlined">
                 <p className="myfont" style={{ margin: "0px" }}>
-                  Choose a Type
+                  {t("ABOUT_US.CHOOSE_TYPE")}
                 </p>
-                <p>Different Type of Vehicle</p>
-                <b>Choose a Type</b>
+                <p>{t("ABOUT_US.DIFFERENT_TYPE_VEHICLE")}</p>
+                <b>{t("ABOUT_US.CHOOSE_TYPE")}</b>
               </Card>
             </Grid>
           </Grid>
@@ -156,7 +162,7 @@ const AboutUs = () => {
             <Grid xs={9} md={9}>
               <Card style={{ padding: "15px" }} variant="outlined">
                 <p className="myfont" style={{ margin: "0px" }}>
-                  Select a Vehicle
+                  {t("ABOUT_US.SELECT_VEHICLE")}
                 </p>
               </Card>
             </Grid>

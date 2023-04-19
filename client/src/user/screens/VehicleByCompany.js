@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useMutation } from "@apollo/client";
+import { VEHICLES_BY_COMPANY } from "../../gqloperations/mutation";
+import { GET_ALL_VEHICLES } from "../../gqloperations/queries";
 
 import Topbar from "../components/Topbar";
 import Footer from "../components/footer";
@@ -17,13 +21,11 @@ import CardMedia from "@mui/material/CardMedia";
 import carSeat from "../public/image/svgs/car-seat.webp";
 import carGear from "../public/image/svgs/car-gear.webp";
 import carFuel from "../public/image/svgs/car-fuel.webp";
-import { useMutation } from "@apollo/client";
-import { VEHICLES_BY_COMPANY } from "../../gqloperations/mutation";
-import { GET_ALL_VEHICLES } from "../../gqloperations/queries";
 
 const { REACT_APP_BASE_URL } = process.env;
 const VehicleByCompany = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("common");
   const [vehicleByCompanyData, setVehicleByCompanyData] = useState([]);
 
   const { companyId } = useParams("id");
@@ -43,7 +45,7 @@ const VehicleByCompany = () => {
       });
     }
   }, [companyId]);
-  console.log("vehicleByCompanyData", vehicleByCompanyData);
+
   const detailHandler = (vehicleId) => {
     navigate(`/user/VehicleDetails/${vehicleId}`);
   };
@@ -61,7 +63,7 @@ const VehicleByCompany = () => {
           <ImageList>
             <ImageListItem key="Subheader">
               <ListSubheader component="div" style={{ background: "none" }}>
-                Vehicles
+                {t("VEHICLE_TYPE.VEHICLE")}
               </ListSubheader>
             </ImageListItem>
           </ImageList>
@@ -81,11 +83,6 @@ const VehicleByCompany = () => {
                   <CardContent style={{ padding: "0px" }}>
                     <center>
                       <h3 style={{ margin: "0px" }}>
-                        {/* {companiesInfo?.map((data) => {
-                          return data._id === row.companyId
-                            ? data.companyName
-                            : "";
-                        })}{" "} */}
                         {row.companyId.companyName} {row.vehicleName}
                       </h3>
                     </center>
@@ -131,7 +128,9 @@ const VehicleByCompany = () => {
                         style={{ marginLeft: "10px" }}
                         alt="seat"
                       />
-                      <span>{row.seats} seats</span>
+                      <span>
+                        {row.seats} {t("VEHICLE_TYPE.SEATS")}
+                      </span>
                     </Grid>
                   </Grid>
 
@@ -146,7 +145,10 @@ const VehicleByCompany = () => {
                       display: "flex",
                     }}
                   >
-                    <b>Rs. {row.priceperday} Price/Day</b>
+                    <b>
+                      {t("VEHICLE_TYPE.RS")} {row.priceperday}{" "}
+                      {t("VEHICLE_TYPE.PRICE_PER_DAY")}
+                    </b>
                   </Grid>
 
                   <Grid container marginTop="15px">
@@ -158,7 +160,7 @@ const VehicleByCompany = () => {
                           bookHandler(row._id);
                         }}
                       >
-                        Book
+                        {t("VEHICLE_TYPE.BOOK")}
                       </Button>
                       <Button
                         style={{ margin: "5px" }}
@@ -168,7 +170,7 @@ const VehicleByCompany = () => {
                           detailHandler(row._id);
                         }}
                       >
-                        Details
+                        {t("VEHICLE_TYPE.DETAILS")}
                       </Button>
                     </Grid>
                   </Grid>

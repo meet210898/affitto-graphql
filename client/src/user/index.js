@@ -11,6 +11,12 @@ import Company from "./screens/Company";
 import Vehicle from "./screens/Vehicle";
 import Category from "./screens/Category";
 import VehicleByCompany from "./screens/VehicleByCompany";
+import VehicleByType from "./screens/VehicleByType";
+import ComingSoon from "./screens/ComingSoon";
+import VehicleDetails from "./screens/VehicleDetails";
+import Booking from "./screens/Booking";
+import BookingConfirm from "./screens/BookingConfirm";
+import MyBooking from "./screens/MyBooking";
 
 const index = () => {
   return (
@@ -25,9 +31,21 @@ const index = () => {
         <Route path="/user/company" element={<Company />} />
         <Route path="/user/vehicles" element={<Vehicle />} />
         <Route path="/user/category" element={<Category />} />
+        <Route path="/user/comingsoon" element={<ComingSoon />} />
+        <Route path="/user/booking/:vehicleId" element={<Booking />} />
+        <Route path="/user/confirmBooking" element={<BookingConfirm />} />
+        <Route path="/user/mybooking" element={<MyBooking />} />
+        <Route
+          path="/user/vehicledetails/:vehicleId"
+          element={<VehicleDetails />}
+        />
         <Route
           path="/user/vehicles/:companyId"
           element={<VehicleByCompany />}
+        />
+        <Route
+          path="/user/vehiclesByType/:typeId"
+          element={<VehicleByType />}
         />
       </Routes>
     </BrowserRouter>

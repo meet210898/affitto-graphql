@@ -1,5 +1,6 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   GET_ALL_COMPANIES,
   GET_ALL_VEHICLES,
@@ -36,13 +37,11 @@ const { REACT_APP_BASE_URL } = process.env;
 // }));
 
 const Category = () => {
+  const { t } = useTranslation("common");
   const vehicleTypesInfo = useQuery(GET_ALL_VEHICLETYPES);
   const vehiclesInfo = useQuery(GET_ALL_VEHICLES);
   const companiesInfo = useQuery(GET_ALL_COMPANIES);
 
-  console.log("vehicleTypesInfo", vehicleTypesInfo);
-  console.log("vehiclesInfo", vehiclesInfo);
-  console.log("companiesInfo", companiesInfo);
   return (
     <>
       <Topbar />
@@ -52,7 +51,7 @@ const Category = () => {
           <ImageList>
             <ImageListItem key="Subheader">
               <ListSubheader component="div" style={{ background: "none" }}>
-                Category
+                {t("CATEGORY.CATEGORY")}
               </ListSubheader>
             </ImageListItem>
           </ImageList>
@@ -90,7 +89,7 @@ const Category = () => {
           <Grid container>
             <Grid xs={1}></Grid>
             <Grid xs={10} md={12} style={{ position: "relative" }}>
-              <h3 style={{ margin: "0px" }}>Explore Vehicle</h3>
+              <h3 style={{ margin: "0px" }}>{t("CATEGORY.EXPLORE_VEHICLE")}</h3>
               <Grid container display="flex">
                 {vehiclesInfo?.data?.vehicle.slice(0, 2).map((row) => (
                   <NavLink to={`/user/VehicleDetails/${row._id}`}>
@@ -134,7 +133,10 @@ const Category = () => {
                           display: "flex",
                         }}
                       >
-                        <b>Rs. {row.priceperday} Price/Day</b>
+                        <b>
+                          {t("CATEGORY.RS")} {row.priceperday}{" "}
+                          {t("CATEGORY.PRICE_PER_DAY")}
+                        </b>
                       </Grid>
                     </Card>
                   </NavLink>

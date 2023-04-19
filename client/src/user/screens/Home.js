@@ -1,18 +1,17 @@
 import * as React from "react";
-import {
-  Card,
-  Typography,
-  Button,
-  Grid,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from "@mui/material";
-import Topbar from "../components/Topbar";
-import Carousel from "react-material-ui-carousel";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "@apollo/client";
+import { GET_ALL_FAQS } from "../../gqloperations/queries";
+
+import GridDesign from "../components/grid";
+import Topbar from "../components/Topbar";
+import Footer from "../components/footer";
+import useWindowSize from "../components/useWindowSize";
+
+import Investor from "../components/investor";
+import Cards from "../components/cards";
+import WhyCard from "../components/cards/whyCard";
 
 import img1 from "../public/image/dashboard/dashboardimg1.jpg";
 import img2 from "../public/image/dashboard/dashboardimg2.jpg";
@@ -26,30 +25,25 @@ import landroverInvestor from "../public/image/investor/landrover2.jpg";
 import carSvg from "../public/image/svgs/carSvg.png";
 import price from "../public/image/svgs/price.png";
 
-import GridDesign from "../components/grid";
-import Footer from "../components/footer";
-import useWindowSize from "../components/useWindowSize";
-
-import Investor from "../components/investor";
-import Cards from "../components/cards";
-import WhyCard from "../components/cards/whyCard";
-
+import {
+  Card,
+  Typography,
+  Button,
+  Grid,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
+import Carousel from "react-material-ui-carousel";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "../components/css/imgTxt.css";
-import { useQuery } from "@apollo/client";
-import { GET_ALL_FAQS } from "../../gqloperations/queries";
 
 const HomeScreen = () => {
   const windowSize = useWindowSize();
+  const { t } = useTranslation("common");
 
   const faqInfo = useQuery(GET_ALL_FAQS);
   const imgs = [img1, img2];
-
-  // React.useEffect(() => {
-  //   dispatch(getCompany(4));
-  //   dispatch(getCities(4));
-  //   dispatch(getVehicleType());
-  //   dispatch(listFaq(4));
-  // }, [dispatch]);
 
   return (
     <>
@@ -67,12 +61,10 @@ const HomeScreen = () => {
               />
               <Grid container>
                 <Grid xs={10} md={6}>
-                  <h1 className="imgTitle">AFFITTO</h1>
+                  <h1 className="imgTitle">{t("HOME.AFFITTO")}</h1>
                 </Grid>
                 <Grid xs={8} md={8}>
-                  <p className="description">
-                    Our fastest way to rent a vehicle.
-                  </p>
+                  <p className="description">{t("HOME.RENT_VEHICLE")}</p>
                 </Grid>
                 <Grid xs={5} md={5}>
                   <NavLink
@@ -85,7 +77,7 @@ const HomeScreen = () => {
                       style={{ color: "white", borderColor: "white" }}
                       className="fontsize"
                     >
-                      View Detail
+                      {t("HOME.VIEW_DETAIL")}
                     </Button>
                   </NavLink>
                 </Grid>
@@ -193,7 +185,7 @@ const HomeScreen = () => {
 
         <Grid md={10} xs={10} display="flex" justifyContent="right">
           <NavLink to="/user/faq" style={{ color: "#1b6dc1" }}>
-            <h4>View all..</h4>
+            <h4>{t("HOME.VIEW_ALL")}</h4>
           </NavLink>
         </Grid>
 

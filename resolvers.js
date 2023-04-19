@@ -48,7 +48,7 @@ const resolvers = {
         .sort({ _id: -1 })
         .populate("userId", "_id firstName lastName")
         .populate("companyId", "_id companyName")
-        .populate("vehicleId", "_id vehicleName"),
+        .populate("vehicleId", "_id vehicleName vehicleImage"),
     faqCategory: async () => await FaqCategory.find({}).sort({ _id: -1 }),
     faq: async () =>
       await Faq.find({})
@@ -309,6 +309,26 @@ const resolvers = {
         .populate("companyId", "_id companyName");
       return vehicleByCompany;
     },
+    vehicleByType: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const vehicleByType = await Vehicle.find({
+        typeId: _id,
+      })
+        .populate("typeId", "_id typeName")
+        .populate("companyId", "_id companyName");
+      return vehicleByType;
+    },
+    vehicleDetails: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const vehicleDetails = await Vehicle.findById(_id)
+        .populate("typeId", "_id typeName")
+        .populate("companyId", "_id companyName");
+      return vehicleDetails;
+    },
     //Booking
     createBooking: async (_, { bookingNew }, { userId }) => {
       if (!userId) {
@@ -316,7 +336,17 @@ const resolvers = {
       }
       const newBooking = new Booking(bookingNew);
       await newBooking.save();
-      return "Booking added!!";
+      return newBooking;
+    },
+    bookingByUserId: async (_, { _id }, { userId }) => {
+      if (!userId) {
+        throw new Error("You must be logged in");
+      }
+      const bookingByUserId = await Booking.find({ userId: _id })
+        .populate("userId", "_id firstName lastName")
+        .populate("companyId", "_id companyName")
+        .populate("vehicleId", "_id vehicleName vehicleImage");
+      return bookingByUserId;
     },
 
     // FAQ Category

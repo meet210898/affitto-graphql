@@ -1,0 +1,54 @@
+{
+  "HOME": {
+    "AFFITTO": "AFFITTO",
+    "RENT_VEHICLE": "Our fastest way to rent a vehicle.",
+    "VIEW_DETAIL": "View Detail",
+    "VIEW_ALL": "View all.."
+  },
+  "VEHICLE_DETAILS": {
+    "ABOUT_TITLE": "About Vehicle",
+    "PRICE_PER_DAY": "Price Per Day",
+    "FEATURES": "Features",
+    "SEATS": "Seats",
+    "DOORS": "Doors",
+    "AC": "AC/Non-AC",
+    "RC": "RC",
+    "PUC": "PUC",
+    "INSURANCE": "Insurance"
+  },
+  "VEHICLE_TYPE": {
+    "VEHICLE": "Vehicles",
+    "SEATS": "Seats",
+    "RS": "Rs.",
+    "PRICE_PER_DAY": "Price/Day",
+    "BOOK": "Book",
+    "DETAILS": "Details"
+  },
+  "PROFILE": {
+    "DETAILS": "Your Details",
+    "EMAIL": "Email",
+    "CITY": "City",
+    "PHONE": "Phone",
+    "USERNAME": "Username"
+  },
+  "CATEGORY": {
+    "CATEGORY": "Category",
+    "EXPLORE_VEHICLE": "Explore Vehicle",
+    "RS": "Rs.",
+    "PRICE_PER_DAY": "Price/Day"
+  },
+  "ABOUT_US": {
+    "WHO_WE_ARE": "Who we are",
+    "GO_FAST_SLOW": "Go Fast, Go Safe.",
+    "MAIN_PURPOSE": "Main Purpose?",
+    "OUR_GOAL": "Our Goal",
+    "HOW_IT_WORKS": "How it works",
+    "REGISTER_ACCOUNT": "Register an Account",
+    "REGISTER_USER": "Registration of User",
+    "REGISTER_NEW_USER": "Register New User",
+    "CHOOSE_TYPE": "Choose a Type",
+    "DIFFERENT_TYPE_VEHICLE": "Different Type of Vehicle",
+    "SELECT_VEHICLE": "Select a Vehicle"
+  },
+  "COMPANY": "Company"
+}

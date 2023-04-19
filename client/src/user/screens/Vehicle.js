@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 import {
   GET_ALL_COMPANIES,
   GET_ALL_VEHICLES,
 } from "../../gqloperations/queries";
-import { useQuery } from "@apollo/client";
 
 import Topbar from "../components/Topbar";
 import Footer from "../components/footer";
@@ -26,6 +27,7 @@ import carFuel from "../public/image/svgs/car-fuel.webp";
 const { REACT_APP_BASE_URL } = process.env;
 const Vehicle = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("common");
 
   const companiesInfo = useQuery(GET_ALL_COMPANIES);
   const vehiclesInfo = useQuery(GET_ALL_VEHICLES);
@@ -47,7 +49,7 @@ const Vehicle = () => {
           <ImageList>
             <ImageListItem key="Subheader">
               <ListSubheader component="div" style={{ background: "none" }}>
-                Vehicles
+                {t("VEHICLE_TYPE.VEHICLE")}
               </ListSubheader>
             </ImageListItem>
           </ImageList>
@@ -67,12 +69,7 @@ const Vehicle = () => {
                   <CardContent style={{ padding: "0px" }}>
                     <center>
                       <h3 style={{ margin: "0px" }}>
-                        {companiesInfo?.data?.company.map((data) => {
-                          return data._id === row.companyId
-                            ? data.companyName
-                            : "";
-                        })}{" "}
-                        {row.vehicleName}
+                        {row.companyId.companyName} {row.vehicleName}
                       </h3>
                     </center>
                   </CardContent>
@@ -117,7 +114,9 @@ const Vehicle = () => {
                         style={{ marginLeft: "10px" }}
                         alt="seat"
                       />
-                      <span>{row.seats} seats</span>
+                      <span>
+                        {row.seats} {t("VEHICLE_TYPE.SEATS")}
+                      </span>
                     </Grid>
                   </Grid>
 
@@ -132,7 +131,10 @@ const Vehicle = () => {
                       display: "flex",
                     }}
                   >
-                    <b>Rs. {row.priceperday} Price/Day</b>
+                    <b>
+                      {t("VEHICLE_TYPE.RS")} {row.priceperday}{" "}
+                      {t("VEHICLE_TYPE.PRICE_PER_DAY")}
+                    </b>
                   </Grid>
 
                   <Grid container marginTop="15px">
@@ -144,7 +146,7 @@ const Vehicle = () => {
                           bookHandler(row._id);
                         }}
                       >
-                        Book
+                        {t("VEHICLE_TYPE.BOOK")}
                       </Button>
                       <Button
                         style={{ margin: "5px" }}
@@ -154,7 +156,7 @@ const Vehicle = () => {
                           detailHandler(row._id);
                         }}
                       >
-                        Details
+                        {t("VEHICLE_TYPE.DETAILS")}
                       </Button>
                     </Grid>
                   </Grid>
