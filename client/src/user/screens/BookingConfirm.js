@@ -86,7 +86,7 @@ const BookingScreen = () => {
 
   const paymentHandler = () => {
     const options = {
-      key: "rzp_test_bolvGRv48sO691",
+      key: "KEY",
       amount: bookingData.payment * 100,
       name: "Booking Payment",
       image: logo,
